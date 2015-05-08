@@ -1,0 +1,7 @@
+SOURCES = LPC1769-OLED-1_5.c
+SOURCES += LPC17XX/System/system_LPC17xx.c
+SOURCES += Drivers/OLED_1_5/OLED_Driver.c
+SOURCES += Drivers/OLED_1_5/OLED_HWIF.c
+SOURCES += LPC17XX/Peripherals/SysTick/SysTick.c
+SOURCES += LPC17XX/Peripherals/SPI/LPC17xx_SPI.c
+SOURCES += LPC17XX/Peripherals/PCLKPWR/LPC17xx_PCLKPWR.c
