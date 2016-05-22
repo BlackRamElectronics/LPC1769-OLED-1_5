@@ -18,16 +18,30 @@ uint8_t DisplayBuffer [(X_PIXELS * Y_PIXELS) / 8];
 
 //====================================================================================
 void main()
-{	
+{
 	// Init SysTick
 	SysTick_Config(SystemCoreClock / 1000);		// Generate interrupt every 1 ms
 
-	// Init the OLED display and required hardware
-	InitOLED();
-	
 	// Init on-board LED as output
 	LPC_GPIO1->FIODIR |= 1 << 18;
-	
+
+	LPC_GPIO1->FIOSET = 1 << 18;				// Turn the LED on
+	MsDelay(100);
+	LPC_GPIO1->FIOCLR = 1 << 18;				// Turn the LED off
+    MsDelay(100);
+    LPC_GPIO1->FIOSET = 1 << 18;				// Turn the LED on
+    MsDelay(100);
+	LPC_GPIO1->FIOCLR = 1 << 18;				// Turn the LED off
+    MsDelay(100);
+    LPC_GPIO1->FIOSET = 1 << 18;				// Turn the LED on
+    MsDelay(100);
+	LPC_GPIO1->FIOCLR = 1 << 18;				// Turn the LED off
+    MsDelay(100);
+    LPC_GPIO1->FIOSET = 1 << 18;				// Turn the LED on
+
+	// Init the OLED display and required hardware
+	InitOLED();
+
 	for(;;)
 	{
 		SplashScreen();
@@ -48,7 +62,7 @@ void SplashScreen(void)
 	DrawTextToBuffer(5, "Dev Boards & Displays ", DisplayBuffer);
 	DrawTextToBuffer(6, "        With          ", DisplayBuffer);
 	DrawTextToBuffer(7, "Examples & Tutorials  ", DisplayBuffer);
-	
+
 	WriteBufferToDisplay(DisplayBuffer);
 	MsDelay(10000);
 }
@@ -62,7 +76,7 @@ void TextDemo(void)
 	DrawTextToBuffer(3, "      TEXT DEMO      ", DisplayBuffer);
 	WriteBufferToDisplay(DisplayBuffer);
 	MsDelay(1000);
-	
+
 	memset(DisplayBuffer, 0, sizeof(DisplayBuffer));
 	for(i = 0; i <= 96; i++)
 	{
@@ -73,7 +87,7 @@ void TextDemo(void)
 			col = 0;
 		}
 	}
-	
+
 	WriteBufferToDisplay(DisplayBuffer);
 	MsDelay(2000);
 }
@@ -94,13 +108,13 @@ void ImageDemo(void)
 void AnimationDemo(void)
 {
 	/*uint32_t frame_index;
-	
+
 	// Splash screen
 	memset(DisplayBuffer, 0, sizeof(DisplayBuffer));
 	DrawTextToBuffer(3, "   ANIMATION DEMO    ", DisplayBuffer);
 	WriteBufferToDisplay(DisplayBuffer);
 	MsDelay(1000);
-	
+
 	for(frame_index = 0; frame_index < FRAME_COUNT; frame_index++)
 	{
 		MsDelay(FRAME_DEALY);
