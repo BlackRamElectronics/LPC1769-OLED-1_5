@@ -1,8 +1,16 @@
-#include "LPC17xx.h"
+/*#include "LPC17xx.h"
 #include "system_LPC17xx.h"
 #include "OLED_Driver.h"
 #include "SysTick.h"
-#include "string.h"
+#include "string.h"*/
+
+#include "lpc17xx_spi.h"
+#include "lpc17xx_libcfg.h"
+#include "lpc17xx_pinsel.h"
+#include "debug_frmwrk.h"
+#include "lpc17xx_gpio.h"
+
+#include "BR_SysTick.h"
 
 // Image data files
 //#include "BR_logo_anim.h"
@@ -14,38 +22,42 @@ void ImageDemo(void);
 void AnimationDemo(void);
 
 // Graphics buffer for OLED display
-uint8_t DisplayBuffer [(X_PIXELS * Y_PIXELS) / 8];
+//uint8_t DisplayBuffer [(X_PIXELS * Y_PIXELS) / 8];
+
+// PORT and PIN numbers that LED pin assigned on
+#define LED_PORT_NUM	1
+#define LED_PIN_NUM		(1<<18)
 
 //====================================================================================
 void main()
 {
 	// Init SysTick
-	SysTick_Config(SystemCoreClock / 1000);		// Generate interrupt every 1 ms
+	BR_SysTickInit();
 
 	// Init on-board LED as output
-	LPC_GPIO1->FIODIR |= 1 << 18;
+	GPIO_SetDir(LED_PORT_NUM, LED_PIN_NUM, 1);
+	
+	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
+	BR_MsDelay(200);
 
-	LPC_GPIO1->FIOSET = 1 << 18;				// Turn the LED on
-	MsDelay(100);
-	LPC_GPIO1->FIOCLR = 1 << 18;				// Turn the LED off
-    MsDelay(100);
-    LPC_GPIO1->FIOSET = 1 << 18;				// Turn the LED on
-    MsDelay(100);
-	LPC_GPIO1->FIOCLR = 1 << 18;				// Turn the LED off
-    MsDelay(100);
-    LPC_GPIO1->FIOSET = 1 << 18;				// Turn the LED on
-    MsDelay(100);
-	LPC_GPIO1->FIOCLR = 1 << 18;				// Turn the LED off
-    MsDelay(100);
-    LPC_GPIO1->FIOSET = 1 << 18;				// Turn the LED on
+	GPIO_ClearValue(LED_PORT_NUM, LED_PIN_NUM);
+	BR_MsDelay(200);
+
+	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
+	BR_MsDelay(200);
+
+	GPIO_ClearValue(LED_PORT_NUM, LED_PIN_NUM);
+	BR_MsDelay(200);
+
+	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
 
 	// Init the OLED display and required hardware
 	InitOLED();
 
 	for(;;)
 	{
-		SplashScreen();
-		TextDemo();
+		//SplashScreen();
+		//TextDemo();
 		//ImageDemo();
 		//AnimationDemo();
 	}
@@ -54,7 +66,7 @@ void main()
 //====================================================================================
 void SplashScreen(void)
 {
-	memset(DisplayBuffer, 0, sizeof(DisplayBuffer));
+/*	memset(DisplayBuffer, 0, sizeof(DisplayBuffer));
 
 	DrawTextToBuffer(0, " 0.96\" OLED Display  ", DisplayBuffer);
 	DrawTextToBuffer(2, "      BLACK RAM       ", DisplayBuffer);
@@ -64,13 +76,13 @@ void SplashScreen(void)
 	DrawTextToBuffer(7, "Examples & Tutorials  ", DisplayBuffer);
 
 	WriteBufferToDisplay(DisplayBuffer);
-	MsDelay(10000);
+	MsDelay(10000);*/
 }
 
 //====================================================================================
 void TextDemo(void)
 {
-	uint32_t row = 0, col = 0, i;
+/*	uint32_t row = 0, col = 0, i;
 
 	memset(DisplayBuffer, 0, sizeof(DisplayBuffer));
 	DrawTextToBuffer(3, "      TEXT DEMO      ", DisplayBuffer);
@@ -89,7 +101,7 @@ void TextDemo(void)
 	}
 
 	WriteBufferToDisplay(DisplayBuffer);
-	MsDelay(2000);
+	MsDelay(2000);*/
 }
 
 //====================================================================================

@@ -10,87 +10,100 @@
 #include "OLED_HWIF.h"
 
 // User specific header files
-#include "LPC17xx.h"
-#include "LPC17xx_SPI.h"
-#include "SysTick.h"
+#include "lpc17xx_ssp.h"
+#include "lpc17xx_libcfg.h"
+#include "lpc17xx_pinsel.h"
+#include "lpc17xx_gpio.h"
 
-#define OLED_SPI_PORT SPI_PORT_0_ALT
-//#define OLED_SPI_PORT SPI_BIT_BASH
+#include "BR_SysTick.h"
+
+
+// PORT and PIN numbers that OLED reset pin assigned on
+#define RST_PORT_NUM	2
+#define RST_PIN_NUM		(1<<4)
+
+// PORT and PIN numbers that Command/Data pin assigned on
+#define CD_PORT_NUM		1
+#define CD_PIN_NUM		(1<<23)
+
 
 //====================================================================================
 void OLED_InitIF(void)
 {
-	SPI_CFG_Type config;	// Configuration structure used by the SPI peripheral driver
+	PINSEL_CFG_Type pinsel_cfg;
+	// SSP Configuration structure variable
+	SSP_CFG_Type SSP_ConfigStruct;
 	
-	// Set clock phase to second edge
-	config.CPHA = SPI_CFG_CPHA_SECOND;			
+	// Initialize SPI pin connect
+	// 	P2.20 - SCK;
+	// 	P2.21 - SSEL - used as GPIO
+	// 	Not used - MISO
+	// 	P2.24 - MOSI
+		 
+	pinsel_cfg.Funcnum = PINSEL_FUNC_3;
+	pinsel_cfg.OpenDrain = 0;
+	pinsel_cfg.Pinmode = 0;
+	pinsel_cfg.Portnum = PINSEL_PORT_1;
+	pinsel_cfg.Pinnum = PINSEL_PIN_20;
+	PINSEL_ConfigPin(&pinsel_cfg);
+	pinsel_cfg.Pinnum = PINSEL_PIN_24;
+	PINSEL_ConfigPin(&pinsel_cfg);
+	pinsel_cfg.Pinnum = PINSEL_PIN_21;
+	PINSEL_ConfigPin(&pinsel_cfg);
 	
-	// The clock is in low idle state beteen data
-	config.CPOL = SPI_CFG_CPOL_HIGH; 			
+	// Initialize SSP configuration structure to default
+	SSP_ConfigStructInit(&SSP_ConfigStruct);
 	
-	// We are the master the display is the slave on the bus
-	config.Mode = SPI_CFG_MODE_MASTER;			
+	SSP_ConfigStruct.CPHA = SSP_CPHA_SECOND;
+	SSP_ConfigStruct.CPOL = SSP_CPOL_LO;
+	SSP_ConfigStruct.ClockRate = 8000000;
 	
-	// Standard SPI frame foramt
-	config.FrameFormat = SPI_CFG_FORAMT_SPI;	
+	// Initialize SSP peripheral with parameter given in structure above
+	SSP_Init(LPC_SSP0, &SSP_ConfigStruct);
+	// Enable SSP peripheral
+	SSP_Cmd(LPC_SSP0, ENABLE);
 	
-	// 8 data bit used per transation
-	config.DataBits = 8;						
+	// Configure OLED reset and c/d lines and set high
+	GPIO_SetDir(RST_PORT_NUM, RST_PIN_NUM, 1);
+	GPIO_SetDir(CD_PORT_NUM, CD_PIN_NUM, 1);
 	
-	// Set the clock to 1MHz
-	config.Clock = 8000000;						
-	
-	SPI_Init(OLED_SPI_PORT, &config);
-
-	LPC_PINCON->PINSEL3 &= ~((1<<14) | (1<<15));	// P2.23
-
-	// The OLED display requires two GPIO lines, one for reset(RST) and the other to 
-	// switch between command and data(CD) mode
-	LPC_GPIO1->FIOSET = 1 << 23;
-	LPC_GPIO2->FIOSET = 1 << 4;
-	LPC_GPIO1->FIODIR |= 1 << 23;	// RST output
-	LPC_GPIO2->FIODIR |= 1 << 4;	// CD output
+	GPIO_SetValue(RST_PORT_NUM, RST_PIN_NUM);
+	GPIO_SetValue(CD_PORT_NUM, CD_PIN_NUM);
 }
 
 //====================================================================================
 void OLED_MsDelay(uint32_t ms_delay)
 {
-	MsDelay(ms_delay);
+	BR_MsDelay(ms_delay);
 }
 
 //====================================================================================
 void OLED_SendByte(uint8_t data)
 {
-	SPI_SendByte(OLED_SPI_PORT, data);	
+	SSP_SendData(LPC_SSP0,data);
 }
 
 //====================================================================================
 void OLED_ResetAssert(void)
 {
-	//LPC_GPIO0->FIOCLR = 1 << 22;			// Turn the LED off
-	LPC_GPIO2->FIOCLR = 1 << 4;
+	GPIO_ClearValue(RST_PORT_NUM, RST_PIN_NUM);
 }
 
 //====================================================================================
 void OLED_ResetDeassert(void)
 {
-	//LPC_GPIO0->FIOSET = 1 << 22;			// Turn the LED on
-	LPC_GPIO2->FIOSET = 1 << 4;
+	GPIO_SetValue(RST_PORT_NUM, RST_PIN_NUM);
 }
 
 //====================================================================================
 void OLED_SetCommand(void)
 {
-	SPI_WaitWhileBusy(OLED_SPI_PORT);	// Wait while data getting sent before the set command below
-	//LPC_GPIO0->FIOCLR = 1 << 21;	// CD high
-	LPC_GPIO1->FIOCLR = 1 << 23;
+	GPIO_ClearValue(CD_PORT_NUM, CD_PIN_NUM);
 }
 
 //====================================================================================
 void OLED_SetData(void)
 {
-	SPI_WaitWhileBusy(OLED_SPI_PORT);	// Wait while data getting sent before the set command below
-	//LPC_GPIO0->FIOSET = 1 << 21;	// CD low
-	LPC_GPIO1->FIOSET = 1 << 23;
+	GPIO_SetValue(CD_PORT_NUM, CD_PIN_NUM);
 }
 
