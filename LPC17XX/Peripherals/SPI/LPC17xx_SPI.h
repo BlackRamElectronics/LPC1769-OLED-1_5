@@ -7,9 +7,10 @@
 // Port definitions
 enum
 {
-	SPI_PORT_0		= 0,
-	SPI_PORT_1		= 1,
-	SPI_BIT_BASH	= 2
+	SPI_PORT_0	= 0,
+	SPI_PORT_1	= 1,
+	SPI_BIT_BASH	= 2,
+	SPI_PORT_0_ALT	= 3
 };
 
 //====================================================================================

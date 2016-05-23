@@ -83,19 +83,36 @@ void SPI_Init(uint8_t port, SPI_CFG_Type *config)
 {	
 	uint32_t prescale, clk_divider, ref_clk, ssp_clk;
 	
-	if(port == SPI_PORT_0)
+	if((port == SPI_PORT_0) || (port == SPI_PORT_0_ALT))
 	{	
-		// Clear Current pin configuration
-		LPC_PINCON->PINSEL0 &= ~((1<<30) | (1<<31));	// P0.15 - SCK0
-		LPC_PINCON->PINSEL1 &= ~((1<<0) | (1<<1));		// P0.16 - SSEL0
-		LPC_PINCON->PINSEL1 &= ~((1<<2) | (1<<3));		// P0.17 - MISO0
-		LPC_PINCON->PINSEL1 &= ~((1<<4) | (1<<5));		// P0.18 - MOSI0
+		if(port == SPI_PORT_0)
+		{
+			// Clear Current pin configuration
+			LPC_PINCON->PINSEL0 &= ~((1<<30) | (1<<31));	// P0.15 - SCK0
+			LPC_PINCON->PINSEL1 &= ~((1<<0) | (1<<1));		// P0.16 - SSEL0
+			LPC_PINCON->PINSEL1 &= ~((1<<2) | (1<<3));		// P0.17 - MISO0
+			LPC_PINCON->PINSEL1 &= ~((1<<4) | (1<<5));		// P0.18 - MOSI0
 	
-		// Enable pins for SPI
-		LPC_PINCON->PINSEL0 |= (1<<31);	// P0.15 - SCK0
-		LPC_PINCON->PINSEL1 |= (1<<1);	// P0.16 - SSEL0
-		LPC_PINCON->PINSEL1 |= (1<<3);	// P0.17 - MISO0
-		LPC_PINCON->PINSEL1 |= (1<<5);	// P0.18 - MOSI0
+			// Enable pins for SPI
+			LPC_PINCON->PINSEL0 |= (1<<31);	// P0.15 - SCK0
+			LPC_PINCON->PINSEL1 |= (1<<1);	// P0.16 - SSEL0
+			LPC_PINCON->PINSEL1 |= (1<<3);	// P0.17 - MISO0
+			LPC_PINCON->PINSEL1 |= (1<<5);	// P0.18 - MOSI0
+		}
+		else if(port == SPI_PORT_0_ALT)
+		{
+			// Clear Current pin configuration
+			LPC_PINCON->PINSEL3 &= ~((1<<8) | (1<<9));	// P2.20 - SCK0
+			LPC_PINCON->PINSEL3 &= ~((1<<10) | (1<<11));	// P2.21 - SSEL0
+			LPC_PINCON->PINSEL3 &= ~((1<<14) | (1<<15));	// P2.23 - MISO0
+			LPC_PINCON->PINSEL3 &= ~((1<<16) | (1<<17));	// P2.24 - MOSI0
+	
+			// Enable pins for SPI
+			LPC_PINCON->PINSEL3 |= ((1<<8) | (1<<9));	// P2.20 - SCK0
+			LPC_PINCON->PINSEL3 |= ((1<<10) | (1<<11));	// P2.21 - SSEL0
+			LPC_PINCON->PINSEL3 |= ((1<<14) | (1<<15));	// P2.23 - MISO0
+			LPC_PINCON->PINSEL3 |= ((1<<16) | (1<<17));	// P2.24 - MOSI0
+		}
 
 		// Enable power for SPI module
 		CLKPWR_EnablePPWR(CLKPWR_PCONP_PCSSP0);
@@ -245,7 +262,7 @@ void SPI_Deinit(uint8_t port)
 //====================================================================================
 void SPI_SendByte(uint8_t port, uint8_t data)
 {
-	if(port == SPI_PORT_0)
+	if((port == SPI_PORT_0) || (port == SPI_PORT_0_ALT))
 	{
 		while(LPC_SSP0->SR & SSP_SR_BSY);
 		LPC_SSP0->DR = data;
@@ -292,7 +309,7 @@ void SPI_SendByte(uint8_t port, uint8_t data)
 // This routine will wait while the SPI module is busy
 void SPI_WaitWhileBusy(uint8_t port)
 {
-	if(port == SPI_PORT_0)
+	if((port == SPI_PORT_0) || (port == SPI_PORT_0_ALT))
 	{
 		while(LPC_SSP0->SR & SSP_SR_BSY);
 	}
