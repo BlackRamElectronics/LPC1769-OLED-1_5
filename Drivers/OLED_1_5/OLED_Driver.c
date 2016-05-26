@@ -8,8 +8,8 @@
 #include "OLED_HWIF.h"
 #include "Font_5x7.h"
 
-#define SSD1351WIDTH 128
-#define SSD1351HEIGHT 128  // SET THIS TO 96 FOR 1.27"!
+#define OLED_WIDTH 128
+#define OLED_HEIGHT 128  // SET THIS TO 96 FOR 1.27"!
 
 
 //====================================================================================
@@ -78,6 +78,8 @@ uint8_t Contrast_level = 128;
 #define SSD1351_CMD_STOPSCROLL          0x9E
 #define SSD1351_CMD_STARTSCROLL         0x9F
 
+__attribute__((section("RAM2"))) uint16_t OLED_Buffer[OLED_WIDTH * OLED_HEIGHT];
+
 //====================================================================================
 void SendCMD(uint8_t cmd)
 {
@@ -111,21 +113,21 @@ void rawFillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t fillco
     uint16_t i;
 
     // Bounds check
-    if((x >= SSD1351WIDTH) || (y >= SSD1351HEIGHT))
+    if((x >= OLED_WIDTH) || (y >= OLED_HEIGHT))
     {
         return;
     }
 
     // Y bounds check
-    if(y+h > SSD1351HEIGHT)
+    if(y+h > OLED_HEIGHT)
     {
-        h = SSD1351HEIGHT - y - 1;
+        h = OLED_HEIGHT - y - 1;
     }
 
     // X bounds check
-    if((x + w) > SSD1351WIDTH)
+    if((x + w) > OLED_WIDTH)
     {
-        w = SSD1351WIDTH - x - 1;
+        w = OLED_WIDTH - x - 1;
     }
 
     // set location
@@ -172,7 +174,28 @@ void fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t fillcolor
 //====================================================================================
 void fillScreen(uint16_t fillcolor)
 {
-    fillRect(0, 0, SSD1351WIDTH, SSD1351HEIGHT, fillcolor);
+	uint16_t i;
+
+    //fillRect(0, 0, OLED_WIDTH, OLED_HEIGHT, fillcolor);
+
+	// Fill the buffer with the requested color
+	//memset(OLED_Buffer, 0xffff, 1024);
+	/*for(i = 0; i < 15000; i++)
+	{
+		OLED_Buffer[i] = fillcolor;
+	}*/
+	// Set OLED write location
+    /*SendCMD(SSD1351_CMD_SETCOLUMN);
+    SendData(0);
+    SendData(OLED_WIDTH);
+    SendCMD(SSD1351_CMD_SETROW);
+    SendData(0);
+    SendData(OLED_HEIGHT);
+    SendCMD(SSD1351_CMD_WRITERAM);
+	
+	// Send the data buffer
+	OLED_SetData();
+	OLED_SendBuffer(OLED_Buffer, sizeof(OLED_Buffer));*/
 }
 
 //====================================================================================
@@ -211,7 +234,7 @@ void InitOLED(void)
     SendData(0x7F);
 
     SendCMD(SSD1351_CMD_STARTLINE);        // 0xA1
-    if(SSD1351HEIGHT == 96)
+    if(OLED_HEIGHT == 96)
     {
         SendData(96);
     }

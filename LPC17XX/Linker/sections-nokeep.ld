@@ -113,6 +113,15 @@ SECTIONS
 		__bss_end__ = .;
 	} > RAM
 	
+	.bss_RAMAHB :
+	{
+		. = ALIGN(4);
+		__start_RAM2 = .;
+		*(RAM2)
+		. = ALIGN(4);
+		__end_RAM2 = .;
+	} > RAMAHB
+	
 	.heap (COPY):
 	{
 		__end__ = .;

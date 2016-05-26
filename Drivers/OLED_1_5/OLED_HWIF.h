@@ -4,6 +4,7 @@
 void OLED_InitIF(void);
 void OLED_MsDelay(uint32_t ms_delay);
 void OLED_SendByte(uint8_t data);
+void OLED_SendBuffer(uint16_t *data, uint16_t length);
 void OLED_ResetAssert(void);
 void OLED_ResetDeassert(void);
 void OLED_SetCommand(void);
