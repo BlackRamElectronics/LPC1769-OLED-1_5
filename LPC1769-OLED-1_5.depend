@@ -1,24 +1,28 @@
 # depslib dependency file v1.0
-1463814981 source:c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_driver.c
+1464359022 source:c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_driver.c
 	<stdint.h>
 	"OLED_Driver.h"
 	"OLED_HWIF.h"
 	"Font_5x7.h"
 
-1382015191 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_driver.h
+1463737619 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_driver.h
 
-1382010545 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_hwif.h
+1464358492 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_hwif.h
 
-1382013454 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\font_5x7.h
+1463737619 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\font_5x7.h
 
-1382188390 source:c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_hwif.c
+1464359134 source:c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_hwif.c
 	<stdint.h>
 	"OLED_HWIF.h"
-	"LPC17xx.h"
-	"LPC17xx_SPI.h"
-	"SysTick.h"
+	"string.h"
+	"lpc17xx_ssp.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_pinsel.h"
+	"lpc17xx_gpio.h"
+	"lpc17xx_gpdma.h"
+	"BR_SysTick.h"
 
-1379169758 c:\code\git\lpc1769-oled-1_5\lpc17xx\system\lpc17xx.h
+1463737619 c:\code\git\lpc1769-oled-1_5\lpc17xx\system\lpc17xx.h
 	"core_cm3.h"
 	"system_LPC17xx.h"
 
@@ -26,21 +30,27 @@
 	<stdint.h>
 	<intrinsics.h>
 
-1379169758 c:\code\git\lpc1769-oled-1_5\lpc17xx\system\system_lpc17xx.h
+1463737619 c:\code\git\lpc1769-oled-1_5\lpc17xx\system\system_lpc17xx.h
 	<stdint.h>
 
 1382187288 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\spi\lpc17xx_spi.h
 
 1381904388 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\systick\systick.h
 
-1431100394 source:c:\code\git\lpc1769-oled-1_5\lpc1769-oled-1_5.c
-	"LPC17xx.h"
+1464355140 source:c:\code\git\lpc1769-oled-1_5\lpc1769-oled-1_5.c
 	"system_LPC17xx.h"
 	"OLED_Driver.h"
 	"SysTick.h"
 	"string.h"
+	"lpc17xx_spi.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_pinsel.h"
+	"debug_frmwrk.h"
+	"lpc17xx_gpio.h"
+	"OLED_Driver.h"
+	"BR_SysTick.h"
 
-1463690201 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\core\core_cm3.c
+1463737619 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\core\core_cm3.c
 	<stdint.h>
 
 1382077280 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\pclkpwr\lpc17xx_pclkpwr.c
@@ -58,9 +68,280 @@
 	"LPC17xx.h"
 	"SysTick.h"
 
-1379051970 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\startup\startup_lpc17xx.s
+1464338065 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\startup\startup_lpc17xx.s
 
-1379169758 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\system\system_lpc17xx.c
+1463737619 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\system\system_lpc17xx.c
 	<stdint.h>
 	"LPC17xx.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\drivers\br_systick\br_systick.c
+	"lpc17xx_libcfg.h"
+	"BR_SysTick.h"
+
+1464356480 c:\code\git\lpc1769-oled-1_5\include\\lpc17xx_libcfg.h
+	"lpc_types.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc_types.h
+	<stdint.h>
+
+1464332899 c:\code\git\lpc1769-oled-1_5\drivers\br_systick\br_systick.h
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_ssp.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1463737619 c:\code\git\lpc1769-oled-1_5\lpc17xx\system\\lpc17xx.h
+	"core_cm3.h"
+	"system_LPC17xx.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\core\\core_cm3.h
+	<stdint.h>
+	<intrinsics.h>
+
+1463737619 c:\code\git\lpc1769-oled-1_5\lpc17xx\system\\system_lpc17xx.h
+	<stdint.h>
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_pinsel.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_gpio.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_gpdma.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\drivers\br_systick\\br_systick.h
+
+1463737619 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\\oled_driver.h
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_spi.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\debug_frmwrk.h
+	"lpc17xx_uart.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_uart.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\debug_frmwrk.c
+	"debug_frmwrk.h"
+	"lpc17xx_pinsel.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_libcfg_default.h
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_adc.c
+	"lpc17xx_adc.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_adc.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_clkpwr.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_can.c
+	"lpc17xx_can.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_can.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_clkpwr.c
+	"lpc17xx_clkpwr.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_dac.c
+	"lpc17xx_dac.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_dac.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_emac.c
+	"lpc17xx_emac.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_emac.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_exti.c
+	"lpc17xx_exti.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_exti.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_gpdma.c
+	"lpc17xx_gpdma.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_gpio.c
+	"lpc17xx_gpio.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_i2c.c
+	"lpc17xx_i2c.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_pinsel.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_i2c.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_i2s.c
+	"lpc17xx_i2s.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_i2s.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_iap.c
+	"lpc17xx_iap.h"
+	"system_LPC17xx.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_iap.h
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_libcfg_default.c
+	"lpc17xx_libcfg_default.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_mcpwm.c
+	"lpc17xx_mcpwm.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_mcpwm.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_nvic.c
+	"lpc17xx_nvic.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_nvic.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_pinsel.c
+	"lpc17xx_pinsel.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_pwm.c
+	"lpc17xx_pwm.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_pwm.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_qei.c
+	"lpc17xx_qei.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_qei.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_rit.c
+	"lpc17xx_rit.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_rit.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_rtc.c
+	"lpc17xx_rtc.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_rtc.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_spi.c
+	"lpc17xx_spi.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_ssp.c
+	"lpc17xx_ssp.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_systick.c
+	"lpc17xx_systick.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_systick.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_timer.c
+	"lpc17xx_timer.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_pinsel.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_timer.h
+	"LPC17xx.h"
+	"lpc_types.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_uart.c
+	"lpc17xx_uart.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\source\lpc17xx_wdt.c
+	"lpc17xx_wdt.h"
+	"lpc17xx_clkpwr.h"
+	"lpc17xx_pinsel.h"
+	"lpc17xx_libcfg.h"
+	"lpc17xx_libcfg_default.h"
+
+1464332899 c:\code\git\lpc1769-oled-1_5\lpc17xx\peripherals\include\\lpc17xx_wdt.h
+	"LPC17xx.h"
+	"lpc_types.h"
 

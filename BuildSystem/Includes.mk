@@ -1,4 +1,5 @@
 INCLUDES = -I ./
+INCLUDES = -Iinclude
 INCLUDES += -ILPC17XX/Core
 INCLUDES += -ILPC17XX/System
 INCLUDES += -IDrivers/OLED_1_5

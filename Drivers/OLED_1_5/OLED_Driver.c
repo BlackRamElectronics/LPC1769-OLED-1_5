@@ -180,27 +180,30 @@ void fillScreen(uint16_t fillcolor)
 
 	// Fill the buffer with the requested color
 	//memset(OLED_Buffer, 0xffff, 1024);
-	/*for(i = 0; i < 15000; i++)
+	for(i = 0; i < OLED_WIDTH*OLED_HEIGHT; i++)
 	{
 		OLED_Buffer[i] = fillcolor;
-	}*/
+	}
 	// Set OLED write location
-    /*SendCMD(SSD1351_CMD_SETCOLUMN);
+    SendCMD(SSD1351_CMD_SETCOLUMN);
     SendData(0);
     SendData(OLED_WIDTH);
     SendCMD(SSD1351_CMD_SETROW);
     SendData(0);
     SendData(OLED_HEIGHT);
     SendCMD(SSD1351_CMD_WRITERAM);
-	
+
 	// Send the data buffer
 	OLED_SetData();
-	OLED_SendBuffer(OLED_Buffer, sizeof(OLED_Buffer));*/
+	//OLED_SendBuffer((uint8_t*)OLED_Buffer, sizeof(OLED_Buffer));
+	OLED_SendBuffer((uint8_t*)OLED_Buffer, 100);
 }
 
 //====================================================================================
 void InitOLED(void)
 {
+    uint16_t i;
+
     OLED_InitIF();                      // Setup hardware interface
 
     OLED_ResetAssert();                 // Put display into reset
@@ -277,6 +280,12 @@ void InitOLED(void)
     SendData(0x01);
 
     SendCMD(SSD1351_CMD_DISPLAYON);        //--turn on oled panel
+
+
+    for(i = 0; i < 15000; i++)
+	{
+		OLED_Buffer[i] = 0xffff;
+	}
 
     while(1)
     {

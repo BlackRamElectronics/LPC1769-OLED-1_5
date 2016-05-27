@@ -113,7 +113,7 @@ SECTIONS
 		__bss_end__ = .;
 	} > RAM
 	
-	.bss_RAMAHB :
+	.bss_RAMAHB (NOLOAD):
 	{
 		. = ALIGN(4);
 		__start_RAM2 = .;

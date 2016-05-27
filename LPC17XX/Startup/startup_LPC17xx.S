@@ -1,12 +1,12 @@
 /* File: startup_ARMCM3.S
- * Purpose: startup file for Cortex-M3 devices. Should use with 
+ * Purpose: startup file for Cortex-M3 devices. Should use with
  *   GCC for ARM Embedded Processors
  * Version: V1.4
  * Date: 09 July 2012
- * 
+ *
  * Copyright (c) 2011, 2012, ARM Limited
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
     * Redistributions of source code must retain the above copyright
@@ -17,7 +17,7 @@
     * Neither the name of the ARM Limited nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -63,7 +63,7 @@ __HeapBase:
     .size __HeapBase, . - __HeapBase
 __HeapLimit:
     .size __HeapLimit, . - __HeapLimit
-    
+
     .section .isr_vector
     .align 2
     .globl __isr_vector
@@ -87,7 +87,7 @@ __isr_vector:
 
     /* External interrupts */
     .long    Default_Handler
-    
+
     .size    __isr_vector, . - __isr_vector
 
     .text
@@ -98,7 +98,7 @@ __isr_vector:
     .type    Reset_Handler, %function
 Reset_Handler:
 /*     Loop to copy data from read only memory to RAM. The ranges
- *      of copy from/to are specified by following symbols evaluated in 
+ *      of copy from/to are specified by following symbols evaluated in
  *      linker script.
  *      __etext: End of code section, i.e., begin of data sections to copy from.
  *      __data_start__/__data_end__: RAM address range that data should be
@@ -110,7 +110,7 @@ Reset_Handler:
 
 #if 1
 /* Here are two copies of loop implemenations. First one favors code size
- * and the second one favors performance. Default uses the first one. 
+ * and the second one favors performance. Default uses the first one.
  * Change to "#if 0" to use the second one */
 .LC0:
     cmp     r2, r3
@@ -119,14 +119,14 @@ Reset_Handler:
     strlt   r0, [r2], #4
     blt    .LC0
 #else
-    subs    r3, r2
-    ble    .LC1    
+/*    subs    r3, r2
+    ble    .LC1
 .LC0:
     subs    r3, #4
     ldr    r0, [r1, r3]
     str    r0, [r2, r3]
     bgt    .LC0
-.LC1:
+.LC1:*/
 #endif
 
 #ifdef __STARTUP_CLEAR_BSS
@@ -159,7 +159,7 @@ Reset_Handler:
     bl    __START
     .pool
     .size Reset_Handler, . - Reset_Handler
-    
+
 /*    Macro to define default handlers. Default handler
  *    will be weak symbol and just dead loops. They can be
  *    overwritten by other handlers */
@@ -172,7 +172,7 @@ Reset_Handler:
     b    .
     .size    \handler_name, . - \handler_name
     .endm
-    
+
     def_default_handler    NMI_Handler
     def_default_handler    HardFault_Handler
     def_default_handler    MemManage_Handler

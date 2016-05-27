@@ -49,7 +49,7 @@ void OLED_InitIF(void)
 	// 	P2.21 - SSEL - used as GPIO
 	// 	Not used - MISO
 	// 	P2.24 - MOSI
-		 
+
 	pinsel_cfg.Funcnum = PINSEL_FUNC_3;
 	pinsel_cfg.OpenDrain = 0;
 	pinsel_cfg.Pinmode = 0;
@@ -60,25 +60,25 @@ void OLED_InitIF(void)
 	PINSEL_ConfigPin(&pinsel_cfg);
 	pinsel_cfg.Pinnum = PINSEL_PIN_21;
 	PINSEL_ConfigPin(&pinsel_cfg);
-	
+
 	// Initialize SSP configuration structure to default
 	SSP_ConfigStructInit(&SSP_ConfigStruct);
-	
+
 	SSP_ConfigStruct.CPHA = SSP_CPHA_SECOND;
 	SSP_ConfigStruct.CPOL = SSP_CPOL_LO;
 	SSP_ConfigStruct.ClockRate = 8000000;
-	
+
 	// Initialize SSP peripheral with parameter given in structure above
 	SSP_Init(LPC_SSP0, &SSP_ConfigStruct);
 	// Enable SSP peripheral
 	SSP_Cmd(LPC_SSP0, ENABLE);
-	
+
 #ifdef SSP_USE_DMA
 	// GPDMA Interrupt configuration section
 	// preemption = 1, sub-priority = 1
-	NVIC_SetPriority(DMA_IRQn, ((0x01<<3)|0x01));
-	// Enable SSP0 interrupt 
-	NVIC_EnableIRQ(DMA_IRQn);
+	//NVIC_SetPriority(SSP0_IRQn, ((0x01<<3)|0x01));
+	// Enable SSP0 interrupt
+	//NVIC_EnableIRQ(SSP0_IRQn);
 
 	// Initialize GPDMA controller
 	GPDMA_Init();
@@ -88,16 +88,16 @@ void OLED_InitIF(void)
     NVIC_DisableIRQ (DMA_IRQn);
     // preemption = 1, sub-priority = 1
     NVIC_SetPriority(DMA_IRQn, ((0x01<<3)|0x01));
-    
-    
-    
-    
+
+
+
+
 #endif
-	
+
 	// Configure OLED reset and c/d lines and set high
 	GPIO_SetDir(RST_PORT_NUM, RST_PIN_NUM, 1);
 	GPIO_SetDir(CD_PORT_NUM, CD_PIN_NUM, 1);
-	
+
 	GPIO_SetValue(RST_PORT_NUM, RST_PIN_NUM);
 	GPIO_SetValue(CD_PORT_NUM, CD_PIN_NUM);
 }
@@ -114,28 +114,30 @@ void OLED_SendByte(uint8_t data)
 	SSP_SendData(LPC_SSP0,data);
 }
 
+
 //====================================================================================
-void OLED_SendBuffer(uint16_t *data, uint16_t length)
+void OLED_SendBuffer(uint8_t *data, uint16_t length)
 {
 #ifndef SSP_USE_DMA
 	uint16_t i;
-	
+
 	for(i = 0; i < length; i++)
 	{
 		SSP_SendData(LPC_SSP0, *data++);
 	}
-#else	
+#else
 	GPDMA_Channel_CFG_Type GPDMACfg;
-	
+
 	// Configure GPDMA channel 0 -------------------------------------------------------------
     // DMA Channel 0
     GPDMACfg.ChannelNum = 0;
 	// Source memory
-	GPDMACfg.SrcMemAddr = (uint32_t) data;
+	GPDMACfg.SrcMemAddr = (uint32_t) &data;
 	// Destination memory - Not used
 	GPDMACfg.DstMemAddr = 0;
 	// Transfer size
-	GPDMACfg.TransferSize = length/4;
+	//GPDMACfg.TransferSize = length;
+	GPDMACfg.TransferSize = 50;
 	// Transfer width - not used
 	GPDMACfg.TransferWidth = 0;
 	// Transfer type
@@ -153,19 +155,19 @@ void OLED_SendBuffer(uint16_t *data, uint16_t length)
 	Channel0_TC = 0;
 	// Reset Error counter
 	Channel0_Err = 0;
-	
+
 	// Enable TX DMA on SSP0
 	SSP_DMACmd (LPC_SSP0, SSP_DMA_TX, ENABLE);
 
 	// Enable Tx and Rx DMA on SSP0
-	SSP_DMACmd (LPC_SSP0, SSP_DMA_RX, ENABLE);
+	//SSP_DMACmd (LPC_SSP0, SSP_DMA_RX, ENABLE);
 
 	// Enable GPDMA channel 0
 	GPDMA_ChannelCmd(0, ENABLE);
 
     // Enable interrupt for DMA
     NVIC_EnableIRQ (DMA_IRQn);
-
+    GPIO_ClearValue(1, 1<<18);
 #endif
 }
 
@@ -173,6 +175,8 @@ void OLED_SendBuffer(uint16_t *data, uint16_t length)
 //====================================================================================
 void DMA_IRQHandler (void)
 {
+    GPIO_SetValue(1, 1<<18);
+
 	// check GPDMA interrupt on channel 0
 	if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 0)){
 		// Check counter terminal status
@@ -221,12 +225,14 @@ void OLED_ResetDeassert(void)
 //====================================================================================
 void OLED_SetCommand(void)
 {
+    while(SSP_GetStatus(LPC_SSP0, SSP_STAT_BUSY) == SET);
 	GPIO_ClearValue(CD_PORT_NUM, CD_PIN_NUM);
 }
 
 //====================================================================================
 void OLED_SetData(void)
 {
+    while(SSP_GetStatus(LPC_SSP0, SSP_STAT_BUSY) == SET);
 	GPIO_SetValue(CD_PORT_NUM, CD_PIN_NUM);
 }
 

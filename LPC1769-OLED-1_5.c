@@ -10,6 +10,7 @@
 #include "debug_frmwrk.h"
 #include "lpc17xx_gpio.h"
 
+#include "OLED_Driver.h"
 #include "BR_SysTick.h"
 
 // Image data files
@@ -29,14 +30,26 @@ void AnimationDemo(void);
 #define LED_PIN_NUM		(1<<18)
 
 //====================================================================================
-void main()
+int main()
 {
 	// Init SysTick
 	BR_SysTickInit();
 
 	// Init on-board LED as output
 	GPIO_SetDir(LED_PORT_NUM, LED_PIN_NUM, 1);
-	
+
+	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
+	BR_MsDelay(200);
+
+	GPIO_ClearValue(LED_PORT_NUM, LED_PIN_NUM);
+	BR_MsDelay(200);
+
+	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
+	BR_MsDelay(200);
+
+	GPIO_ClearValue(LED_PORT_NUM, LED_PIN_NUM);
+	BR_MsDelay(200);
+
 	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
 	BR_MsDelay(200);
 
@@ -61,6 +74,8 @@ void main()
 		//ImageDemo();
 		//AnimationDemo();
 	}
+
+	return(0);
 }
 
 //====================================================================================
