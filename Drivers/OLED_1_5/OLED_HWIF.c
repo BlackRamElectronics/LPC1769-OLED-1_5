@@ -132,12 +132,12 @@ void OLED_SendBuffer(uint8_t *data, uint16_t length)
     // DMA Channel 0
     GPDMACfg.ChannelNum = 0;
 	// Source memory
-	GPDMACfg.SrcMemAddr = (uint32_t) &data;
+	GPDMACfg.SrcMemAddr = (uint32_t) data;
 	// Destination memory - Not used
 	GPDMACfg.DstMemAddr = 0;
 	// Transfer size
 	//GPDMACfg.TransferSize = length;
-	GPDMACfg.TransferSize = 50;
+	GPDMACfg.TransferSize = 4095;
 	// Transfer width - not used
 	GPDMACfg.TransferWidth = 0;
 	// Transfer type
