@@ -37,6 +37,8 @@ __IO uint32_t Channel0_TC;
 // Error Counter flag for Channel 0
 __IO uint32_t Channel0_Err;
 
+void SendDmaBlock(uint8_t *data, uint16_t length);
+
 //====================================================================================
 void OLED_InitIF(void)
 {
@@ -66,7 +68,7 @@ void OLED_InitIF(void)
 
 	SSP_ConfigStruct.CPHA = SSP_CPHA_SECOND;
 	SSP_ConfigStruct.CPOL = SSP_CPOL_LO;
-	SSP_ConfigStruct.ClockRate = 8000000;
+	SSP_ConfigStruct.ClockRate = 12500000;  // Max speed for LPC1768, could be increased for LPC1769
 
 	// Initialize SSP peripheral with parameter given in structure above
 	SSP_Init(LPC_SSP0, &SSP_ConfigStruct);
@@ -74,12 +76,6 @@ void OLED_InitIF(void)
 	SSP_Cmd(LPC_SSP0, ENABLE);
 
 #ifdef SSP_USE_DMA
-	// GPDMA Interrupt configuration section
-	// preemption = 1, sub-priority = 1
-	//NVIC_SetPriority(SSP0_IRQn, ((0x01<<3)|0x01));
-	// Enable SSP0 interrupt
-	//NVIC_EnableIRQ(SSP0_IRQn);
-
 	// Initialize GPDMA controller
 	GPDMA_Init();
 
@@ -88,10 +84,6 @@ void OLED_InitIF(void)
     NVIC_DisableIRQ (DMA_IRQn);
     // preemption = 1, sub-priority = 1
     NVIC_SetPriority(DMA_IRQn, ((0x01<<3)|0x01));
-
-
-
-
 #endif
 
 	// Configure OLED reset and c/d lines and set high
@@ -114,19 +106,55 @@ void OLED_SendByte(uint8_t data)
 	SSP_SendData(LPC_SSP0,data);
 }
 
-
 //====================================================================================
 void OLED_SendBuffer(uint8_t *data, uint16_t length)
 {
+    uint8_t *data_ptr = data;
+    uint16_t remaining_length = length;
+    uint16_t current_tx_length;
+
 #ifndef SSP_USE_DMA
 	uint16_t i;
 
 	for(i = 0; i < length; i++)
 	{
+	    while(SSP_GetStatus(LPC_SSP0, SSP_STAT_BUSY) == SET);
 		SSP_SendData(LPC_SSP0, *data++);
 	}
 #else
-	GPDMA_Channel_CFG_Type GPDMACfg;
+    // Loop whilst there is still data to send
+    while(remaining_length != 0)
+    {
+        // The max length the LPC DMA can handle is 4096 bytes
+        if(remaining_length > 4095)
+        {
+            // Limit the transfer to 4096 bytes
+            current_tx_length = 4095;
+        }
+        else
+        {
+            // Less than 4096 bytes still to send
+            current_tx_length = remaining_length;
+        }
+
+        SendDmaBlock(data_ptr, current_tx_length); // Start the transfer
+        //while(Channel0_TC != current_tx_length);    // Wait until the transfer is complete
+        while(Channel0_TC == 0);    // Wait until the transfer is complete
+
+        remaining_length -= current_tx_length;
+        data_ptr += current_tx_length;
+    }
+
+    GPIO_ClearValue(1, 1<<18);
+#endif // SSP_USE_DMA
+}
+
+//====================================================================================
+void SendDmaBlock(uint8_t *data, uint16_t length)
+{
+#ifdef SSP_USE_DMA
+
+    GPDMA_Channel_CFG_Type GPDMACfg;
 
 	// Configure GPDMA channel 0 -------------------------------------------------------------
     // DMA Channel 0
@@ -136,8 +164,7 @@ void OLED_SendBuffer(uint8_t *data, uint16_t length)
 	// Destination memory - Not used
 	GPDMACfg.DstMemAddr = 0;
 	// Transfer size
-	//GPDMACfg.TransferSize = length;
-	GPDMACfg.TransferSize = 4095;
+	GPDMACfg.TransferSize = length;
 	// Transfer width - not used
 	GPDMACfg.TransferWidth = 0;
 	// Transfer type
@@ -159,41 +186,40 @@ void OLED_SendBuffer(uint8_t *data, uint16_t length)
 	// Enable TX DMA on SSP0
 	SSP_DMACmd (LPC_SSP0, SSP_DMA_TX, ENABLE);
 
-	// Enable Tx and Rx DMA on SSP0
-	//SSP_DMACmd (LPC_SSP0, SSP_DMA_RX, ENABLE);
-
 	// Enable GPDMA channel 0
 	GPDMA_ChannelCmd(0, ENABLE);
 
     // Enable interrupt for DMA
     NVIC_EnableIRQ (DMA_IRQn);
-    GPIO_ClearValue(1, 1<<18);
-#endif
+
+#endif // SSP_USE_DMA
 }
 
 #ifdef SSP_USE_DMA
 //====================================================================================
 void DMA_IRQHandler (void)
 {
-    GPIO_SetValue(1, 1<<18);
-
-	// check GPDMA interrupt on channel 0
-	if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 0)){
+	// Check GPDMA interrupt on channel 0
+	if(GPDMA_IntGetStatus(GPDMA_STAT_INT, 0))
+    {
 		// Check counter terminal status
-		if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, 0)){
+		if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, 0))
+		{
 			// Clear terminate counter Interrupt pending
-			GPDMA_ClearIntPending (GPDMA_STATCLR_INTTC, 0);
-				Channel0_TC++;
+			GPDMA_ClearIntPending(GPDMA_STATCLR_INTTC, 0);
+            Channel0_TC++;
 		}
 		// Check error terminal status
-		if (GPDMA_IntGetStatus(GPDMA_STAT_INTERR, 0)){
+		if(GPDMA_IntGetStatus(GPDMA_STAT_INTERR, 0))
+		{
 			// Clear error counter Interrupt pending
-			GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, 0);
+			GPDMA_ClearIntPending(GPDMA_STATCLR_INTERR, 0);
 			Channel0_Err++;
 		}
 	}
+
 	// check GPDMA interrupt on channel 1
-	if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 1)){
+	/*if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 1)){
 		// Check counter terminal status
 		if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, 1)){
 			// Clear terminate counter Interrupt pending
@@ -206,9 +232,9 @@ void DMA_IRQHandler (void)
 			GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, 1);
 			//Channel1_Err++;
 		}
-	}
+	}*/
 }
-#endif
+#endif // SSP_USE_DMA
 
 //====================================================================================
 void OLED_ResetAssert(void)

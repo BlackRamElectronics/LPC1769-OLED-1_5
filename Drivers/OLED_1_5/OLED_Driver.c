@@ -98,13 +98,26 @@ void SendData(uint8_t data)
 uint16_t Color565(uint8_t r, uint8_t g, uint8_t b)
 {
     uint16_t c;
+
+#ifdef DISPLAY_LITTLE_ENDIAN
+    // Use little endianness
     c = r >> 3;
     c <<= 6;
     c |= g >> 2;
     c <<= 5;
     c |= b >> 3;
 
-    return c;
+    return((c >> 8)|(c << 8));
+#else
+    // Use big endianness
+    c = r >> 3;
+    c <<= 6;
+    c |= g >> 2;
+    c <<= 5;
+    c |= b >> 3;
+
+    return(c);
+#endif // DISPLAY_LITTLE_ENDIAN
 }
 
 //====================================================================================
@@ -187,16 +200,16 @@ void fillScreen(uint16_t fillcolor)
 	// Set OLED write location
     SendCMD(SSD1351_CMD_SETCOLUMN);
     SendData(0);
-    SendData(OLED_WIDTH);
+    SendData(OLED_WIDTH - 1);
     SendCMD(SSD1351_CMD_SETROW);
     SendData(0);
-    SendData(OLED_HEIGHT);
+    SendData(OLED_HEIGHT - 1);
     SendCMD(SSD1351_CMD_WRITERAM);
 
 	// Send the data buffer
 	OLED_SetData();
 	//OLED_SendBuffer((uint8_t*)OLED_Buffer, sizeof(OLED_Buffer));
-	OLED_SendBuffer((uint8_t*)OLED_Buffer, 100);
+	OLED_SendBuffer((uint8_t*)OLED_Buffer, 32768);
 }
 
 //====================================================================================
