@@ -7,7 +7,6 @@
 #include "OLED_Driver.h"
 #include "OLED_HWIF.h"
 #include "Font_5x7.h"
-#include "BR_Font.h"
 #include "BR_Font_OpenSans12p.h"
 
 
@@ -239,6 +238,24 @@ void fillScreen(uint16_t fillcolor)
 }
 
 //====================================================================================
+void WriteFrame(uint8_t *buffer)
+{
+	// Set OLED write location
+    SendCMD(SSD1351_CMD_SETCOLUMN);
+    SendData(0);
+    SendData(OLED_WIDTH - 1);
+    SendCMD(SSD1351_CMD_SETROW);
+    SendData(0);
+    SendData(OLED_HEIGHT - 1);
+    SendCMD(SSD1351_CMD_WRITERAM);
+
+	// Send the data buffer
+	OLED_SetData();
+	//OLED_SendBuffer((uint8_t*)OLED_Buffer, sizeof(OLED_Buffer));
+	OLED_SendBuffer(buffer, 32768);
+}
+
+//====================================================================================
 void InitOLED(void)
 {
     uint16_t i;
@@ -321,11 +338,22 @@ void InitOLED(void)
     SendCMD(SSD1351_CMD_DISPLAYON);        //--turn on oled panel
 
 
-    for(i = 0; i < 15000; i++)
+	// Fill the buffer with blue    
+    for(i = 0; i < OLED_WIDTH*OLED_HEIGHT; i++)
 	{
-		OLED_Buffer[i] = 0xffff;
+		OLED_Buffer[i] = Color565(0, 0, 255);
 	}
-
+	
+	// Draw an 'A' in the middle of the screen
+	DrawChar('A', BR_OpenSans12p, 64, 64, OLED_Buffer);
+    
+    WriteFrame(OLED_Buffer);
+    
+    //OLED_MsDelay(3000);
+    //fillScreen(Color565(0x00, 0xFF, 0x00));
+    while(1);
+    
+    
     while(1)
     {
         fillScreen(Color565(0xFF, 0x00, 0x00));
@@ -412,7 +440,7 @@ void DrawTextToBuffer(uint8_t line, uint8_t *str, uint8_t *buffer)
 
     while((*str != 0) && (i < (TEXT_CHARACTERS_PER_ROW -1)))
     {
-        DrawChar(*str++, line, i++, buffer);
+        //DrawChar(*str++, line, i++, buffer);
     }
 }
 
@@ -433,9 +461,39 @@ void WriteBufferToDisplay(uint8_t *buffer)
 }
 
 //====================================================================================
-void DrawChar(uint8_t val, uint32_t row, uint32_t column, uint8_t *buffer)
+void DrawChar(uint8_t val, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer)
 {
-    uint8_t *char_ptr ;
+	BR_Glyph glyph;
+	uint8_t *bitmap_ptr;
+	uint16_t *buffer_ptr;
+	uint16_t i, j;
+	uint16_t colour = Color565(0xFF, 0xFF, 0xFF);
+	
+	// TODO: change how we find our glyph
+	glyph = font.GlyphList[val - ' '];
+
+	bitmap_ptr = font.BitmapBuffer;
+	
+	bitmap_ptr += glyph.buffer_offset;
+
+	for(i = 0; i < glyph.width; i++)
+	//for(i = 1; i < 9; i++)
+	{
+		buffer_ptr = buffer + (((y + i) * OLED_WIDTH) + x) * 2;
+		
+		for(j = 0; j < glyph.width; j++)
+		//for(j = 1; j < 8; j++)
+		{
+			//*buffer_ptr = AlphaBlend(colour, *buffer_ptr, *bitmap_ptr);
+			if(*bitmap_ptr > 128)
+				*buffer_ptr = colour;
+			bitmap_ptr++;
+			buffer_ptr++;
+		}
+	}
+	
+	
+/*   uint8_t *char_ptr ;
     uint8_t char_row_data;
     uint32_t char_row, pixel_no;
 
@@ -466,7 +524,7 @@ void DrawChar(uint8_t val, uint32_t row, uint32_t column, uint8_t *buffer)
             char_row_data <<= 1;
         }
         char_ptr++;
-    }
+    }*/
 }
 
 //====================================================================================
