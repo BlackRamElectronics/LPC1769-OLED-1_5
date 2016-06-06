@@ -39,28 +39,16 @@ int main()
 	GPIO_SetDir(LED_PORT_NUM, LED_PIN_NUM, 1);
 
 	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
-	BR_MsDelay(200);
+	BR_MsDelay(100);
 
 	GPIO_ClearValue(LED_PORT_NUM, LED_PIN_NUM);
-	BR_MsDelay(200);
+	BR_MsDelay(100);
 
 	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
-	BR_MsDelay(200);
+	BR_MsDelay(100);
 
 	GPIO_ClearValue(LED_PORT_NUM, LED_PIN_NUM);
-	BR_MsDelay(200);
-
-	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
-	BR_MsDelay(200);
-
-	GPIO_ClearValue(LED_PORT_NUM, LED_PIN_NUM);
-	BR_MsDelay(200);
-
-	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
-	BR_MsDelay(200);
-
-	GPIO_ClearValue(LED_PORT_NUM, LED_PIN_NUM);
-	BR_MsDelay(200);
+	BR_MsDelay(100);
 
 	GPIO_SetValue(LED_PORT_NUM, LED_PIN_NUM);
 

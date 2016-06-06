@@ -4,11 +4,14 @@
 //====================================================================================
 
 #include <stdint.h>         // Include standard types
+#include <stdio.h>
 #include "OLED_Driver.h"
 #include "OLED_HWIF.h"
 #include "Font_5x7.h"
 #include "BR_Font_OpenSans12p.h"
-
+#include "BR_Font_OpenSans16p.h"
+#include "BR_Font_OpenSans24p.h"
+#include "BR_Font_Test.h"
 
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 128  // SET THIS TO 96 FOR 1.27"!
@@ -132,6 +135,53 @@ uint16_t Color565(uint8_t r, uint8_t g, uint8_t b)
 //====================================================================================
 uint16_t AlphaBlend(uint16_t fg, uint16_t bg, uint8_t alpha)
 {
+	uint16_t fg_temp, bg_temp, result;
+
+#ifdef DISPLAY_LITTLE_ENDIAN
+    // Use little endianness
+    fg_temp = ((fg >> 8)|(fg << 8));
+    bg_temp = ((bg >> 8)|(bg << 8));
+#else
+    // Use big endianness
+    fg_temp = fg;
+    bg_temp = bg;
+#endif // DISPLAY_LITTLE_ENDIAN
+
+
+
+	// Split foreground into components
+    unsigned fg_r = fg_temp >> 11;
+    unsigned fg_g = (fg_temp >> 5) & ((1u << 6) - 1);
+    unsigned fg_b = fg_temp & ((1u << 5) - 1);
+
+    // Split background into components
+    unsigned bg_r = bg_temp >> 11;
+    unsigned bg_g = (bg_temp >> 5) & ((1u << 6) - 1);
+    unsigned bg_b = bg_temp & ((1u << 5) - 1);
+
+    // Alpha blend components
+    unsigned out_r = (fg_r * alpha + bg_r * (255 - alpha)) / 255;
+    unsigned out_g = (fg_g * alpha + bg_g * (255 - alpha)) / 255;
+    unsigned out_b = (fg_b * alpha + bg_b * (255 - alpha)) / 255;
+
+    // Pack result
+    result = (unsigned short) ((out_r << 11) | (out_g << 5) | out_b);
+
+
+#ifdef DISPLAY_LITTLE_ENDIAN
+    // Use little endianness
+	return((result >> 8)|(result << 8));
+#else
+    // Use big endianness
+    return(result);
+#endif // DISPLAY_LITTLE_ENDIAN
+
+
+
+
+
+
+
     // alpha for foreground multiplication
     // convert from 8bit to (6bit+1) with rounding
     // will be in [0..64] inclusive
@@ -141,8 +191,22 @@ uint16_t AlphaBlend(uint16_t fg, uint16_t bg, uint8_t alpha)
     uint8_t beta = MAX_ALPHA - alpha;
     // so (0..64)*alpha + (0..64)*beta always in 0..64
 
-    return (uint16_t)((((alpha * (uint32_t)(fg & MASK_RB) + beta * (uint32_t)(bg & MASK_RB)) & MASK_MUL_RB)|
-            ((alpha * (fg & MASK_G) + beta * (bg & MASK_G)) & MASK_MUL_G)) >> 6);
+
+    result = (uint16_t)(((((alpha * (uint32_t)(fg & MASK_RB)) 
+    		+ (beta * (uint32_t)(bg & MASK_RB))) & MASK_MUL_RB)|
+            (((alpha * (uint32_t)(fg & MASK_G)) + (beta * (uint32_t)(bg & MASK_G))) & MASK_MUL_G)) >> 6);
+
+
+#ifdef DISPLAY_LITTLE_ENDIAN
+    // Use little endianness
+	return((result >> 8)|(result << 8));
+#else
+    // Use big endianness
+    return(result);
+#endif // DISPLAY_LITTLE_ENDIAN
+
+
+	return(result);
 }
 
 //====================================================================================
@@ -258,7 +322,9 @@ void WriteFrame(uint8_t *buffer)
 //====================================================================================
 void InitOLED(void)
 {
-    uint16_t i;
+    uint16_t i, j;
+	uint8_t str_buffer[30];
+
 
     OLED_InitIF();                      // Setup hardware interface
 
@@ -345,11 +411,35 @@ void InitOLED(void)
 	}
 	
 	// Draw an 'A' in the middle of the screen
-	DrawChar('A', BR_OpenSans12p, 64, 64, OLED_Buffer);
+	//DrawChar('A', BR_OpenSans12p, 64, 64, OLED_Buffer);
+    
+    DrawTextToBuffer("Hello World! adg", Color565(255, 255, 255),BR_OpenSans12p, 10, 20, OLED_Buffer);
+    DrawTextToBuffer("Hello World!", Color565(0,0,0), BR_OpenSans16p, 10, 40, OLED_Buffer);
+    DrawTextToBuffer("Hello World!", Color565(255,255,0), BR_OpenSans16p, 10, 60, OLED_Buffer);
     
     WriteFrame(OLED_Buffer);
     
-    //OLED_MsDelay(3000);
+    OLED_MsDelay(3000);
+    
+    j = 0;
+    
+    while(1)
+    {
+    	// Fill the buffer with blue    
+    	for(i = 0; i < OLED_WIDTH*OLED_HEIGHT; i++)
+		{
+			OLED_Buffer[i] = Color565(0, 255, 0);
+		}
+		
+		sprintf(str_buffer, "%d", j++);
+    
+    	DrawTextToBuffer(str_buffer, Color565(255,255,255), BR_OpenSans24p, 10, 60, OLED_Buffer);
+    	//DrawTextToBuffer("12345", Color565(255,0,255), BR_OpenSans16p, 10, 60, OLED_Buffer);
+    	WriteFrame(OLED_Buffer);
+    	OLED_MsDelay(300);
+    }
+    
+    
     //fillScreen(Color565(0x00, 0xFF, 0x00));
     while(1);
     
@@ -434,13 +524,11 @@ void DisplayImage(uint8_t *img)
 }
 
 //====================================================================================
-void DrawTextToBuffer(uint8_t line, uint8_t *str, uint8_t *buffer)
+void DrawTextToBuffer(uint8_t *str, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer)
 {
-    uint8_t i = 0;
-
-    while((*str != 0) && (i < (TEXT_CHARACTERS_PER_ROW -1)))
+    while(*str != 0)	// TODO: Check for out of bounds
     {
-        //DrawChar(*str++, line, i++, buffer);
+    	x += DrawChar(*str++, colour, font, x, y, buffer);
     }
 }
 
@@ -461,36 +549,34 @@ void WriteBufferToDisplay(uint8_t *buffer)
 }
 
 //====================================================================================
-void DrawChar(uint8_t val, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer)
+uint8_t DrawChar(uint8_t val, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer)
 {
 	BR_Glyph glyph;
 	uint8_t *bitmap_ptr;
 	uint16_t *buffer_ptr;
 	uint16_t i, j;
-	uint16_t colour = Color565(0xFF, 0xFF, 0xFF);
 	
 	// TODO: change how we find our glyph
 	glyph = font.GlyphList[val - ' '];
+	//glyph = font.GlyphList[33];
 
 	bitmap_ptr = font.BitmapBuffer;
 	
 	bitmap_ptr += glyph.buffer_offset;
 
-	for(i = 0; i < glyph.width; i++)
-	//for(i = 1; i < 9; i++)
+	for(i = 0; i < glyph.height; i++)
 	{
-		buffer_ptr = buffer + (((y + i) * OLED_WIDTH) + x) * 2;
-		
+		buffer_ptr = buffer + (((y - glyph.top + i) * OLED_WIDTH) + x + glyph.left);
 		for(j = 0; j < glyph.width; j++)
-		//for(j = 1; j < 8; j++)
 		{
-			//*buffer_ptr = AlphaBlend(colour, *buffer_ptr, *bitmap_ptr);
-			if(*bitmap_ptr > 128)
-				*buffer_ptr = colour;
+			*buffer_ptr = AlphaBlend(colour, *buffer_ptr, *bitmap_ptr);
+			//*buffer_ptr = AlphaBlend(colour, Color565(0, 0, 255), *bitmap_ptr);
 			bitmap_ptr++;
 			buffer_ptr++;
 		}
 	}
+
+	return(glyph.hori_adv);
 	
 	
 /*   uint8_t *char_ptr ;
