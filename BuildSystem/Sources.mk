@@ -3,10 +3,7 @@ SOURCES += LPC17XX/System/system_LPC17xx.c
 SOURCES += Drivers/OLED_1_5/OLED_Driver.c
 SOURCES += Drivers/OLED_1_5/OLED_HWIF.c
 SOURCES += Drivers/BR_SysTick/BR_SysTick.c
-
-#SOURCES += LPC17XX/Peripherals/SysTick/SysTick.c
-#SOURCES += LPC17XX/Peripherals/SPI/LPC17xx_SPI.c
-#SOURCES += LPC17XX/Peripherals/PCLKPWR/LPC17xx_PCLKPWR.c
+SOURCES += Lib/BlackRam_EmbedGFX/BlackRam_EmbedGFX.c
 
 # Peripheral Driver Source Code
 SOURCES += LPC17XX/Peripherals/source/debug_frmwrk.c

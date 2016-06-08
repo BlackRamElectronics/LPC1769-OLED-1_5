@@ -1,10 +1,24 @@
 // ==== System Includes ===
-#include <stdint.h>
+#include <stdint.h>         // Include standard types
 
 // ==== Project Includes ====
+#include "BR_Font.h"
 #include "BlackRam_EmbedGFX.h"
 
 // ==== Definitions ====
+
+// ==== Function Declerations ====
+uint16_t AlphaBlend(uint16_t fg, uint16_t bg, uint8_t alpha);
+
+// ==== Variable Declerations ====
+BR_GFX_ENDIENNESS DisplayEndien = BR_GFX_LITTLE_ENDIAN;
+
+//====================================================================================
+BR_GFX_RET BR_GFX_Init(BR_GFX_ENDIENNESS endienness)
+{
+	DisplayEndien = endienness;
+	return(BR_GFX_RET_OK);
+}
 
 //====================================================================================
 // Set the requested pixel in the buffer to the blended colour
@@ -35,25 +49,28 @@ uint16_t Color565(uint8_t r, uint8_t g, uint8_t b)
 {
     uint16_t c;
 
-#ifdef DISPLAY_LITTLE_ENDIAN
-    // Use little endianness
-    c = r >> 3;
-    c <<= 6;
-    c |= g >> 2;
-    c <<= 5;
-    c |= b >> 3;
+	if(DisplayEndien == BR_GFX_LITTLE_ENDIAN)
+	{
+		// Use little endianness
+		c = r >> 3;
+		c <<= 6;
+		c |= g >> 2;
+		c <<= 5;
+		c |= b >> 3;
 
-    return((c >> 8)|(c << 8));
-#else
-    // Use big endianness
-    c = r >> 3;
-    c <<= 6;
-    c |= g >> 2;
-    c <<= 5;
-    c |= b >> 3;
+		return((c >> 8)|(c << 8));
+	}
+	else
+	{
+		// Use big endianness
+		c = r >> 3;
+		c <<= 6;
+		c |= g >> 2;
+		c <<= 5;
+		c |= b >> 3;
 
-    return(c);
-#endif // DISPLAY_LITTLE_ENDIAN
+		return(c);
+	}
 }
 
 //====================================================================================
@@ -63,17 +80,18 @@ uint16_t AlphaBlend(uint16_t fg, uint16_t bg, uint8_t alpha)
 {
 	uint16_t fg_temp, bg_temp, result;
 
-#ifdef DISPLAY_LITTLE_ENDIAN
-    // Use little endianness
-    fg_temp = ((fg >> 8)|(fg << 8));
-    bg_temp = ((bg >> 8)|(bg << 8));
-#else
-    // Use big endianness
-    fg_temp = fg;
-    bg_temp = bg;
-#endif // DISPLAY_LITTLE_ENDIAN
-
-
+	if(DisplayEndien == BR_GFX_LITTLE_ENDIAN)
+	{
+    	// Use little endianness
+    	fg_temp = ((fg >> 8)|(fg << 8));
+    	bg_temp = ((bg >> 8)|(bg << 8));
+	}
+	else
+	{
+    	// Use big endianness
+    	fg_temp = fg;
+    	bg_temp = bg;
+    }
 
 	// Split foreground into components
     unsigned fg_r = fg_temp >> 11;
@@ -94,13 +112,16 @@ uint16_t AlphaBlend(uint16_t fg, uint16_t bg, uint8_t alpha)
     result = (unsigned short) ((out_r << 11) | (out_g << 5) | out_b);
 
 
-#ifdef DISPLAY_LITTLE_ENDIAN
-    // Use little endianness
-	return((result >> 8)|(result << 8));
-#else
-    // Use big endianness
-    return(result);
-#endif // DISPLAY_LITTLE_ENDIAN
+	if(DisplayEndien == BR_GFX_LITTLE_ENDIAN)
+	{
+    	// Use little endianness
+		return((result >> 8)|(result << 8));
+	}
+	else
+	{
+    	// Use big endianness
+    	return(result);
+    }
 }
 
 //====================================================================================
@@ -130,7 +151,7 @@ BR_GFX_RET BR_GFX_DrawLine(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
     }
 
     // Draw the initial pixel, which is always exactly intersected by the line and so needs no weighting
-    DrawPixel(x0, y0, colour, 255, canvas);
+    BR_GFX_DrawPixel(x0, y0, colour, 255, canvas);
 
     // Find the x and y distance of travel
     delta_x = x1 - x0;
@@ -156,7 +177,7 @@ BR_GFX_RET BR_GFX_DrawLine(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
         while(delta_x-- != 0)
         {
             x0 += x_dir;
-            DrawPixel(x0, y0, colour, 255, canvas);
+            BR_GFX_DrawPixel(x0, y0, colour, 255, canvas);
         }
         return(BR_GFX_RET_OK);
     }
@@ -167,7 +188,7 @@ BR_GFX_RET BR_GFX_DrawLine(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
         while(y0 <= y1)
         {
             y0++;
-            DrawPixel(x0, y0, colour, 255, canvas);
+            BR_GFX_DrawPixel(x0, y0, colour, 255, canvas);
         }
         return(BR_GFX_RET_OK);
     }
@@ -179,7 +200,7 @@ BR_GFX_RET BR_GFX_DrawLine(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
         {
             x0 += x_dir;
             y0++;
-            DrawPixel(x0, y0, colour, 255, canvas);
+            BR_GFX_DrawPixel(x0, y0, colour, 255, canvas);
         }
         return(BR_GFX_RET_OK);
     }
@@ -213,13 +234,13 @@ BR_GFX_RET BR_GFX_DrawLine(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
             intensity weighting for this pixel, and the complement of the
             weighting for the paired pixel */
             weighting = error_acc >> 8;
-            DrawPixel(x0, y0, colour, weighting, canvas);
-            DrawPixel(x0 + x_dir, y0, (weighting ^ 0xFF), 255, canvas);
+            BR_GFX_DrawPixel(x0, y0, colour, 255 - (uint8_t)weighting, canvas);
+            BR_GFX_DrawPixel(x0 + x_dir, y0, colour, (uint8_t)weighting, canvas);
         }
 
         // Draw the final pixel, which is always exactly intersected by the line and so needs no weighting
-        DrawPixel(x1, y1, colour, 255, canvas);
-        return;
+        BR_GFX_DrawPixel(x1, y1, colour, 255, canvas);
+        return(BR_GFX_RET_OK);
     }
 
     /* It's an X-major line; calculate 16-bit fixed-point fractional part of a
@@ -238,17 +259,17 @@ BR_GFX_RET BR_GFX_DrawLine(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
             y0++;
         }
 
-        y0 += x_dir; // X-major, so always advance X
+        x0 += x_dir; // X-major, so always advance X
         /* The IntensityBits most significant bits of error_acc give us the
             intensity weighting for this pixel, and the complement of the
             weighting for the paired pixel */
         weighting = error_acc >> 8;
-        DrawPixel(x0, y0, colour, weighting, canvas);
-        DrawPixel(x0, y0 + 1, (weighting ^ 0xFF), 255, canvas);
+        BR_GFX_DrawPixel(x0, y0, colour, 255 - weighting, canvas);
+        BR_GFX_DrawPixel(x0, y0 + 1, colour, weighting, canvas);
     }
 
     // Draw the final pixel, which is always exactly intersected by the line and so needs no weighting
-    DrawPixel(x1, y1, colour, 255, canvas);
+    BR_GFX_DrawPixel(x1, y1, colour, 255, canvas);
 
     return(BR_GFX_RET_OK);
 }
@@ -348,16 +369,16 @@ BR_GFX_RET BR_DrawCircleAA(uint16_t radius, uint16_t center_x, uint16_t center_y
 }
 
 //====================================================================================
-BR_GFX_RET BR_GFX_DrawTextToBuffer(uint8_t *str, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer)
+BR_GFX_RET BR_GFX_DrawTextToBuffer(uint8_t *str, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, BR_GFX_Canvas canvas)
 {
     while(*str != 0)	// TODO: Check for out of bounds
     {
-    	x += DrawChar(*str++, colour, font, x, y, buffer);
+    	x += BR_GFX_DrawChar(*str++, colour, font, x, y, canvas);
     }
 }
 
 //====================================================================================
-uint8_t BR_GFX_DrawChar(uint8_t val, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer)
+uint8_t BR_GFX_DrawChar(uint8_t val, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, BR_GFX_Canvas canvas)
 {
 	BR_Glyph glyph;
 	uint8_t *bitmap_ptr;
@@ -373,7 +394,7 @@ uint8_t BR_GFX_DrawChar(uint8_t val, uint16_t colour, BR_Font font, uint16_t x, 
 
 	for(i = 0; i < glyph.height; i++)
 	{
-		buffer_ptr = buffer + (((y - glyph.top + i) * OLED_WIDTH) + x + glyph.left);
+		buffer_ptr = canvas.Buffer + (((y - glyph.top + i) * canvas.Width) + x + glyph.left);
 		for(j = 0; j < glyph.width; j++)
 		{
 			*buffer_ptr = AlphaBlend(colour, *buffer_ptr, *bitmap_ptr);
