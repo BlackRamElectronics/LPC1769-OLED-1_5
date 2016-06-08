@@ -11,7 +11,6 @@
 #include "BR_Font_OpenSans12p.h"
 #include "BR_Font_OpenSans16p.h"
 #include "BR_Font_OpenSans24p.h"
-#include "BR_Font_Test.h"
 
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 128  // SET THIS TO 96 FOR 1.27"!
@@ -97,116 +96,6 @@ void SendData(uint8_t data)
 {
     OLED_SetData();
     OLED_SendByte((uint8_t)data);
-}
-
-//====================================================================================
-uint16_t Color565(uint8_t r, uint8_t g, uint8_t b)
-{
-    uint16_t c;
-
-#ifdef DISPLAY_LITTLE_ENDIAN
-    // Use little endianness
-    c = r >> 3;
-    c <<= 6;
-    c |= g >> 2;
-    c <<= 5;
-    c |= b >> 3;
-
-    return((c >> 8)|(c << 8));
-#else
-    // Use big endianness
-    c = r >> 3;
-    c <<= 6;
-    c |= g >> 2;
-    c <<= 5;
-    c |= b >> 3;
-
-    return(c);
-#endif // DISPLAY_LITTLE_ENDIAN
-}
-
-//====================================================================================
-                            //   rrrrrggggggbbbbb
-#define MASK_RB       63519 // 0b1111100000011111
-#define MASK_G         2016 // 0b0000011111100000
-#define MASK_MUL_RB 4065216 // 0b1111100000011111000000
-#define MASK_MUL_G   129024 // 0b0000011111100000000000
-#define MAX_ALPHA        64 // 6bits+1 with rounding
-//====================================================================================
-uint16_t AlphaBlend(uint16_t fg, uint16_t bg, uint8_t alpha)
-{
-	uint16_t fg_temp, bg_temp, result;
-
-#ifdef DISPLAY_LITTLE_ENDIAN
-    // Use little endianness
-    fg_temp = ((fg >> 8)|(fg << 8));
-    bg_temp = ((bg >> 8)|(bg << 8));
-#else
-    // Use big endianness
-    fg_temp = fg;
-    bg_temp = bg;
-#endif // DISPLAY_LITTLE_ENDIAN
-
-
-
-	// Split foreground into components
-    unsigned fg_r = fg_temp >> 11;
-    unsigned fg_g = (fg_temp >> 5) & ((1u << 6) - 1);
-    unsigned fg_b = fg_temp & ((1u << 5) - 1);
-
-    // Split background into components
-    unsigned bg_r = bg_temp >> 11;
-    unsigned bg_g = (bg_temp >> 5) & ((1u << 6) - 1);
-    unsigned bg_b = bg_temp & ((1u << 5) - 1);
-
-    // Alpha blend components
-    unsigned out_r = (fg_r * alpha + bg_r * (255 - alpha)) / 255;
-    unsigned out_g = (fg_g * alpha + bg_g * (255 - alpha)) / 255;
-    unsigned out_b = (fg_b * alpha + bg_b * (255 - alpha)) / 255;
-
-    // Pack result
-    result = (unsigned short) ((out_r << 11) | (out_g << 5) | out_b);
-
-
-#ifdef DISPLAY_LITTLE_ENDIAN
-    // Use little endianness
-	return((result >> 8)|(result << 8));
-#else
-    // Use big endianness
-    return(result);
-#endif // DISPLAY_LITTLE_ENDIAN
-
-
-
-
-
-
-
-    // alpha for foreground multiplication
-    // convert from 8bit to (6bit+1) with rounding
-    // will be in [0..64] inclusive
-    alpha = (alpha + 2) >> 2;
-    // "beta" for background multiplication; (6bit+1);
-    // will be in [0..64] inclusive
-    uint8_t beta = MAX_ALPHA - alpha;
-    // so (0..64)*alpha + (0..64)*beta always in 0..64
-
-
-    result = (uint16_t)(((((alpha * (uint32_t)(fg & MASK_RB)) 
-    		+ (beta * (uint32_t)(bg & MASK_RB))) & MASK_MUL_RB)|
-            (((alpha * (uint32_t)(fg & MASK_G)) + (beta * (uint32_t)(bg & MASK_G))) & MASK_MUL_G)) >> 6);
-
-
-#ifdef DISPLAY_LITTLE_ENDIAN
-    // Use little endianness
-	return((result >> 8)|(result << 8));
-#else
-    // Use big endianness
-    return(result);
-#endif // DISPLAY_LITTLE_ENDIAN
-
-
-	return(result);
 }
 
 //====================================================================================
@@ -404,46 +293,46 @@ void InitOLED(void)
     SendCMD(SSD1351_CMD_DISPLAYON);        //--turn on oled panel
 
 
-	// Fill the buffer with blue    
+	// Fill the buffer with blue
     for(i = 0; i < OLED_WIDTH*OLED_HEIGHT; i++)
 	{
 		OLED_Buffer[i] = Color565(0, 0, 255);
 	}
-	
+
 	// Draw an 'A' in the middle of the screen
 	//DrawChar('A', BR_OpenSans12p, 64, 64, OLED_Buffer);
-    
+
     DrawTextToBuffer("Hello World! adg", Color565(255, 255, 255),BR_OpenSans12p, 10, 20, OLED_Buffer);
     DrawTextToBuffer("Hello World!", Color565(0,0,0), BR_OpenSans16p, 10, 40, OLED_Buffer);
     DrawTextToBuffer("Hello World!", Color565(255,255,0), BR_OpenSans16p, 10, 60, OLED_Buffer);
-    
+
     WriteFrame(OLED_Buffer);
-    
+
     OLED_MsDelay(3000);
-    
+
     j = 0;
-    
+
     while(1)
     {
-    	// Fill the buffer with blue    
+    	// Fill the buffer with blue
     	for(i = 0; i < OLED_WIDTH*OLED_HEIGHT; i++)
 		{
 			OLED_Buffer[i] = Color565(0, 255, 0);
 		}
-		
+
 		sprintf(str_buffer, "%d", j++);
-    
+
     	DrawTextToBuffer(str_buffer, Color565(255,255,255), BR_OpenSans24p, 10, 60, OLED_Buffer);
     	//DrawTextToBuffer("12345", Color565(255,0,255), BR_OpenSans16p, 10, 60, OLED_Buffer);
     	WriteFrame(OLED_Buffer);
     	OLED_MsDelay(300);
     }
-    
-    
+
+
     //fillScreen(Color565(0x00, 0xFF, 0x00));
     while(1);
-    
-    
+
+
     while(1)
     {
         fillScreen(Color565(0xFF, 0x00, 0x00));
@@ -524,15 +413,6 @@ void DisplayImage(uint8_t *img)
 }
 
 //====================================================================================
-void DrawTextToBuffer(uint8_t *str, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer)
-{
-    while(*str != 0)	// TODO: Check for out of bounds
-    {
-    	x += DrawChar(*str++, colour, font, x, y, buffer);
-    }
-}
-
-//====================================================================================
 void WriteBufferToDisplay(uint8_t *buffer)
 {
     uint8_t i,j;
@@ -546,71 +426,6 @@ void WriteBufferToDisplay(uint8_t *buffer)
             SendData(*buffer++);
         }
     }
-}
-
-//====================================================================================
-uint8_t DrawChar(uint8_t val, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer)
-{
-	BR_Glyph glyph;
-	uint8_t *bitmap_ptr;
-	uint16_t *buffer_ptr;
-	uint16_t i, j;
-	
-	// TODO: change how we find our glyph
-	glyph = font.GlyphList[val - ' '];
-	//glyph = font.GlyphList[33];
-
-	bitmap_ptr = font.BitmapBuffer;
-	
-	bitmap_ptr += glyph.buffer_offset;
-
-	for(i = 0; i < glyph.height; i++)
-	{
-		buffer_ptr = buffer + (((y - glyph.top + i) * OLED_WIDTH) + x + glyph.left);
-		for(j = 0; j < glyph.width; j++)
-		{
-			*buffer_ptr = AlphaBlend(colour, *buffer_ptr, *bitmap_ptr);
-			//*buffer_ptr = AlphaBlend(colour, Color565(0, 0, 255), *bitmap_ptr);
-			bitmap_ptr++;
-			buffer_ptr++;
-		}
-	}
-
-	return(glyph.hori_adv);
-	
-	
-/*   uint8_t *char_ptr ;
-    uint8_t char_row_data;
-    uint32_t char_row, pixel_no;
-
-    // Is the requested destination with in the display area
-    if(((row + 1) > TEXT_ROWS) || ((column + 1) > TEXT_CHARACTERS_PER_ROW))
-    {
-        return;
-    }
-
-    // Get a pointer to the char in our font file
-    char_ptr = (uint8_t *)&FONT_5x7;                    // Init to start of font
-    char_ptr += ((val - 0x20) * FONT_CELL_HEIGHT);      // Offset to the required char
-
-    // Draw each row of the char
-    for(char_row = 0; char_row < FONT_CELL_HEIGHT; char_row++)
-    {
-        char_row_data = *char_ptr;
-        for(pixel_no = 0; pixel_no < FONT_CELL_WIDTH; pixel_no++)
-        {
-            if(char_row_data & 0x80)
-            {
-                SetPixel((column * FONT_CELL_WIDTH) + pixel_no, (row * FONT_CELL_HEIGHT) + char_row, 1, buffer);
-            }
-            else
-            {
-                SetPixel((column * FONT_CELL_WIDTH) + pixel_no, (row * FONT_CELL_HEIGHT) + char_row, 0, buffer);
-            }
-            char_row_data <<= 1;
-        }
-        char_ptr++;
-    }*/
 }
 
 //====================================================================================

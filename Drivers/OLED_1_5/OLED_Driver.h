@@ -17,12 +17,6 @@ void DisplayImage(uint8_t *img);
 // Output the graphic data to the display
 void WriteBufferToDisplay(uint8_t *buffer);
 
-// Draw a string to the buffer at teh line requested
-void DrawTextToBuffer(uint8_t *str, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer);
-
-// Draw a text character at the text cell requested
-uint8_t DrawChar(uint8_t val, uint16_t colour, BR_Font font, uint16_t x, uint16_t y, uint16_t *buffer);
-
 // Set or clear a pixel in the buffer provided
 void SetPixel(uint32_t xpos, uint32_t ypos, uint32_t val, uint8_t *buffer);
 

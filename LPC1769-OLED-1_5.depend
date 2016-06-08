@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1464359022 source:c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_driver.c
+1464697877 source:c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_driver.c
 	<stdint.h>
 	"OLED_Driver.h"
 	"OLED_HWIF.h"
@@ -7,11 +7,11 @@
 
 1463737619 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_driver.h
 
-1464358492 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_hwif.h
+1464697191 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_hwif.h
 
 1463737619 c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\font_5x7.h
 
-1464359134 source:c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_hwif.c
+1464696421 source:c:\code\git\lpc1769-oled-1_5\drivers\oled_1_5\oled_hwif.c
 	<stdint.h>
 	"OLED_HWIF.h"
 	"string.h"
@@ -68,7 +68,7 @@
 	"LPC17xx.h"
 	"SysTick.h"
 
-1464338065 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\startup\startup_lpc17xx.s
+1464678603 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\startup\startup_lpc17xx.s
 
 1463737619 source:c:\code\git\lpc1769-oled-1_5\lpc17xx\system\system_lpc17xx.c
 	<stdint.h>

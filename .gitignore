@@ -2,3 +2,5 @@
 *.axf
 *.exe
 *.map
+*.o
+*.layout
