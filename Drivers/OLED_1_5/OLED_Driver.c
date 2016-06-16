@@ -11,6 +11,7 @@
 #include "BR_Font_OpenSans12p.h"
 #include "BR_Font_OpenSans16p.h"
 #include "BR_Font_OpenSans24p.h"
+#include "ClockFace.h"
 
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 128  // SET THIS TO 96 FOR 1.27"!
@@ -307,7 +308,7 @@ void InitOLED(void)
 	// Draw an 'A' in the middle of the screen
 	//DrawChar('A', BR_OpenSans12p, 64, 64, OLED_Buffer);
 
-	BR_GFX_DrawLine(10, 10, 100, 100, Color565(255,0,0), canvas);
+	/*BR_GFX_DrawLine(10, 10, 100, 100, Color565(255,0,0), canvas);
 	BR_GFX_DrawLine(10, 10, 10, 100, Color565(255,0,0), canvas);
 	BR_GFX_DrawLine(10, 10, 100, 10, Color565(255,0,0), canvas);
 	
@@ -327,9 +328,38 @@ void InitOLED(void)
 
     WriteFrame(OLED_Buffer);
 
-	while(1);
+	//while(1);
 
-    OLED_MsDelay(3000);
+    OLED_MsDelay(3000);*/
+
+	while(1)
+	{
+		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
+		BR_GFX_DrawLine(63, 5, 63, 63, Color565(255,0,0), canvas);
+		BR_GFX_DrawLine(5, 63, 63, 63, Color565(0,0,255), canvas);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(100);
+	
+		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
+		BR_GFX_DrawLine(123, 63, 63, 63, Color565(255,0,0), canvas);
+		BR_GFX_DrawLine(63, 5, 63, 63, Color565(0,0,255), canvas);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(100);
+	
+		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
+		BR_GFX_DrawLine(63, 123, 63, 63, Color565(255,0,0), canvas);
+		BR_GFX_DrawLine(123, 63, 63, 63, Color565(0,0,255), canvas);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(100);
+	
+		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
+		BR_GFX_DrawLine(5, 63, 63, 63, Color565(255,0,0), canvas);
+		BR_GFX_DrawLine(63, 123, 63, 63, Color565(0,0,255), canvas);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(100);
+	}
+	
+	while(1);
 
     j = 0;
 

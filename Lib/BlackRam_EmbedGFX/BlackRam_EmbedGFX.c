@@ -405,3 +405,33 @@ uint8_t BR_GFX_DrawChar(uint8_t val, uint16_t colour, BR_Font font, uint16_t x, 
 
 	return(glyph.hori_adv);
 }
+
+//====================================================================================
+BR_GFX_RET BR_GFX_DrawImage(uint16_t *image_buffer, uint16_t x, uint16_t y, uint16_t width, uint16_t height, BR_GFX_Canvas canvas)
+{
+	uint16_t current_x, current_y;
+	uint16_t *buffer_ptr;
+	
+	// TODO: add out of bounds test
+	
+	for(current_y = y; current_y < (y + height); current_y++)
+	{
+		buffer_ptr = canvas.Buffer + x + (current_y * canvas.Width);
+	
+		for(current_x = x; current_x < (x + width); current_x++)
+		{
+			if(DisplayEndien == BR_GFX_LITTLE_ENDIAN)
+			{
+    			// Use little endianness
+    			*buffer_ptr++ = ((*image_buffer >> 8)|(*image_buffer << 8));
+    			image_buffer++;
+			}
+			else
+			{
+    			// Use big endianness
+				*buffer_ptr++ = *image_buffer++;
+    		}
+		}
+	}
+}
+
