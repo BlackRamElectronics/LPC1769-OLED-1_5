@@ -1,6 +1,7 @@
 // ==== System Includes ===
 
 // ==== Project Includes ====
+#include "BlackRam_EmbedGFX.h"
 #include "clock_demo.h"
 #include "BlackRam_TrigLookup.h"
 #include "ClockFace.h"
@@ -28,7 +29,6 @@ void ClockDemo_SetTime(uint8_t hours, uint8_t minutes, uint8_t seconds)
 //====================================================================================
 void ClockDemo_1sUpdate(uint8_t hours, uint8_t minutes, uint8_t seconds, BR_GFX_Canvas canvas)
 {
-
 	// Update the time
 	Seconds++;
 	if(Seconds >= 60)

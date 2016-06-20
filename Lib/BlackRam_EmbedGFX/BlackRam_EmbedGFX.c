@@ -275,6 +275,24 @@ BR_GFX_RET BR_GFX_DrawLine(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
 }
 
 //====================================================================================
+BR_GFX_RET BR_GFX_DrawRect(uint16_t start_x, uint16_t start_y, uint16_t end_x, uint16_t end_y, BR_GFX_Colour colour, BR_GFX_Canvas canvas)
+{
+	// Create the rectangle from four lines
+	
+	// Draw top line
+	BR_GFX_DrawRect(start_x, start_y, end_x, start_y, colour, canvas);
+	
+	// Draw bottom line
+	BR_GFX_DrawRect(start_x, end_y, end_x, end_y, colour, canvas);
+	
+	// Draw left line
+	BR_GFX_DrawRect(start_x, start_y, start_x, end_y, colour, canvas);
+	
+	// Draw right line
+	BR_GFX_DrawRect(end_x, start_y, end_x, end_y, colour, canvas);
+}
+
+//====================================================================================
 BR_GFX_RET BR_DrawCircleAA(uint16_t radius, uint16_t center_x, uint16_t center_y, BR_GFX_Colour colour, BR_GFX_Canvas canvas)
 {
 	/*uint16_t rad_squ;
