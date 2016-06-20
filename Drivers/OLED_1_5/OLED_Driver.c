@@ -7,10 +7,11 @@
 #include <stdio.h>
 #include "OLED_Driver.h"
 #include "OLED_HWIF.h"
-#include "Font_5x7.h"
+#include "BlackRam_EmbedGFX.h"
 #include "BR_Font_OpenSans12p.h"
 #include "BR_Font_OpenSans16p.h"
 #include "BR_Font_OpenSans24p.h"
+#include "ClockFace.h"
 
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 128  // SET THIS TO 96 FOR 1.27"!
@@ -82,6 +83,7 @@ uint8_t Contrast_level = 128;
 #define SSD1351_CMD_STOPSCROLL          0x9E
 #define SSD1351_CMD_STARTSCROLL         0x9F
 
+BR_GFX_Canvas canvas;
 __attribute__((section("RAM2"))) uint16_t OLED_Buffer[OLED_WIDTH * OLED_HEIGHT];
 
 //====================================================================================
@@ -293,6 +295,10 @@ void InitOLED(void)
     SendCMD(SSD1351_CMD_DISPLAYON);        //--turn on oled panel
 
 
+	canvas.Width = OLED_WIDTH;
+	canvas.Height = OLED_HEIGHT;
+	canvas.Buffer = OLED_Buffer;
+
 	// Fill the buffer with blue
     for(i = 0; i < OLED_WIDTH*OLED_HEIGHT; i++)
 	{
@@ -302,13 +308,58 @@ void InitOLED(void)
 	// Draw an 'A' in the middle of the screen
 	//DrawChar('A', BR_OpenSans12p, 64, 64, OLED_Buffer);
 
-    DrawTextToBuffer("Hello World! adg", Color565(255, 255, 255),BR_OpenSans12p, 10, 20, OLED_Buffer);
-    DrawTextToBuffer("Hello World!", Color565(0,0,0), BR_OpenSans16p, 10, 40, OLED_Buffer);
-    DrawTextToBuffer("Hello World!", Color565(255,255,0), BR_OpenSans16p, 10, 60, OLED_Buffer);
+	/*BR_GFX_DrawLine(10, 10, 100, 100, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(10, 10, 10, 100, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(10, 10, 100, 10, Color565(255,0,0), canvas);
+	
+	BR_GFX_DrawLine(10, 10, 80, 100, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(10, 10, 60, 100, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(10, 10, 40, 100, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(10, 10, 20, 100, Color565(255,0,0), canvas);
+
+	BR_GFX_DrawLine(10, 10, 100, 80, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(10, 10, 100, 60, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(10, 10, 100, 40, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(10, 10, 100, 20, Color565(255,0,0), canvas);
+
+    //BR_GFX_DrawTextToBuffer("Hello World! adg", Color565(255, 255, 255),BR_OpenSans12p, 10, 20, canvas);
+    //BR_GFX_DrawTextToBuffer("Hello World!", Color565(0,0,0), BR_OpenSans16p, 10, 40, canvas);
+    //BR_GFX_DrawTextToBuffer("Hello World!", Color565(255,255,0), BR_OpenSans16p, 10, 60, canvas);
 
     WriteFrame(OLED_Buffer);
 
-    OLED_MsDelay(3000);
+	//while(1);
+
+    OLED_MsDelay(3000);*/
+
+	while(1)
+	{
+		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
+		BR_GFX_DrawLine(63, 5, 63, 63, Color565(255,0,0), canvas);
+		BR_GFX_DrawLine(5, 63, 63, 63, Color565(0,0,255), canvas);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(100);
+	
+		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
+		BR_GFX_DrawLine(123, 63, 63, 63, Color565(255,0,0), canvas);
+		BR_GFX_DrawLine(63, 5, 63, 63, Color565(0,0,255), canvas);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(100);
+	
+		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
+		BR_GFX_DrawLine(63, 123, 63, 63, Color565(255,0,0), canvas);
+		BR_GFX_DrawLine(123, 63, 63, 63, Color565(0,0,255), canvas);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(100);
+	
+		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
+		BR_GFX_DrawLine(5, 63, 63, 63, Color565(255,0,0), canvas);
+		BR_GFX_DrawLine(63, 123, 63, 63, Color565(0,0,255), canvas);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(100);
+	}
+	
+	while(1);
 
     j = 0;
 
@@ -322,7 +373,7 @@ void InitOLED(void)
 
 		sprintf(str_buffer, "%d", j++);
 
-    	DrawTextToBuffer(str_buffer, Color565(255,255,255), BR_OpenSans24p, 10, 60, OLED_Buffer);
+    	BR_GFX_DrawTextToBuffer(str_buffer, Color565(255,255,255), BR_OpenSans24p, 10, 60, canvas);
     	//DrawTextToBuffer("12345", Color565(255,0,255), BR_OpenSans16p, 10, 60, OLED_Buffer);
     	WriteFrame(OLED_Buffer);
     	OLED_MsDelay(300);

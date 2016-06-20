@@ -1,9 +1,6 @@
 #ifndef _OLED_HARDWARE_INTERFACE_H_
 #define _OLED_HARDWARE_INTERFACE_H_
 
-// Display buffer endianness
-#define DISPLAY_LITTLE_ENDIAN   // If defined the data will be stored in little endian, if not big endian
-
 void OLED_InitIF(void);
 void OLED_MsDelay(uint32_t ms_delay);
 void OLED_SendByte(uint8_t data);
