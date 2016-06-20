@@ -11,7 +11,7 @@
 #include "BR_Font_OpenSans12p.h"
 #include "BR_Font_OpenSans16p.h"
 #include "BR_Font_OpenSans24p.h"
-#include "ClockFace.h"
+
 
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 128  // SET THIS TO 96 FOR 1.27"!
@@ -334,6 +334,13 @@ void InitOLED(void)
 
 	while(1)
 	{
+		ClockDemo_1sUpdate(canvas);
+		OLED_MsDelay(1000);
+	}
+	
+	
+	/*while(1)
+	{
 		BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
 		BR_GFX_DrawLine(63, 5, 63, 63, Color565(255,0,0), canvas);
 		BR_GFX_DrawLine(5, 63, 63, 63, Color565(0,0,255), canvas);
@@ -357,7 +364,7 @@ void InitOLED(void)
 		BR_GFX_DrawLine(63, 123, 63, 63, Color565(0,0,255), canvas);
 		WriteFrame(OLED_Buffer);
 		OLED_MsDelay(100);
-	}
+	}*/
 	
 	while(1);
 
