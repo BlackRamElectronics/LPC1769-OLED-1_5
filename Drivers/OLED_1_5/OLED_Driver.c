@@ -8,10 +8,12 @@
 #include "OLED_Driver.h"
 #include "OLED_HWIF.h"
 #include "BlackRam_EmbedGFX.h"
-#include "BR_Font_OpenSans12p.h"
+//#include "BR_Font_OpenSans12p.h"
 #include "BR_Font_OpenSans16p.h"
 #include "BR_Font_OpenSans24p.h"
 
+#include "clock_demo.h"
+#include "guage_demo.h"
 
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 128  // SET THIS TO 96 FOR 1.27"!
@@ -332,10 +334,13 @@ void InitOLED(void)
 
     OLED_MsDelay(3000);*/
 
+	ClockDemo_SetTime(0, 1, 2);
+
 	while(1)
 	{
 		ClockDemo_1sUpdate(canvas);
-		OLED_MsDelay(1000);
+		WriteFrame(OLED_Buffer);
+		OLED_MsDelay(30);
 	}
 	
 	

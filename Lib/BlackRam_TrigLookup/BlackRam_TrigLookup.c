@@ -24,10 +24,10 @@ const uint8_t TrigLookupTable[] =
 };
 
 //====================================================================================
-uint8_t BlackRam_GetTrig(uint16_t degrees, BlackRam_TrigType trig_type)
+int8_t BlackRam_GetTrig(uint16_t degrees, BlackRam_TrigType trig_type)
 {
 	int8_t cos_adjust = 1, sin_adjust = 1;
-	uint16_t degree_temp = degees;
+	uint16_t degree_temp = degrees;
 	
 	// Ensure the degree value is less than 360
 	while(degree_temp >= 360)

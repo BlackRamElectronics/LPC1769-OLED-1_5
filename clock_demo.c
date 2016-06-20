@@ -1,4 +1,5 @@
 // ==== System Includes ===
+#include <stdint.h>         // Include standard types
 
 // ==== Project Includes ====
 #include "BlackRam_EmbedGFX.h"
@@ -7,9 +8,9 @@
 #include "ClockFace.h"
 
 // ==== Definitions ====
-#define HOUR_LENGTH = 30
-#define MINUTE_LENGTH = 59
-#define SECOND_LENGTH = 59
+#define HOUR_LENGTH 30
+#define MINUTE_LENGTH 59
+#define SECOND_LENGTH 59
 
 // ==== Function Decelerations ====
 
@@ -27,7 +28,7 @@ void ClockDemo_SetTime(uint8_t hours, uint8_t minutes, uint8_t seconds)
 }
 
 //====================================================================================
-void ClockDemo_1sUpdate(uint8_t hours, uint8_t minutes, uint8_t seconds, BR_GFX_Canvas canvas)
+void ClockDemo_1sUpdate(BR_GFX_Canvas canvas)
 {
 	// Update the time
 	Seconds++;
@@ -50,13 +51,13 @@ void ClockDemo_1sUpdate(uint8_t hours, uint8_t minutes, uint8_t seconds, BR_GFX_
 	BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
 	
 	// Draw the hour hand
-	BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(hours * (360/24), BLACK_RAM_COS) * HOUR_LENGTH, BlackRam_GetTrig(hours * (360/24), BLACK_RAM_SIN) * HOUR_LENGTH, Color565(255,0,0), canvas);
+	//BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(Hours * (360/24), BLACK_RAM_COS) / 100 * HOUR_LENGTH, BlackRam_GetTrig(Hours * (360/24), BLACK_RAM_SIN) / 100 * HOUR_LENGTH, Color565(255,0,0), canvas);
 	
 	// Draw the minute hand
-	BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(minutes * (360/60), BLACK_RAM_COS) * MINUTE_LENGTH, BlackRam_GetTrig(minutes * (360/60), BLACK_RAM_SIN) * MINUTE_LENGTH, Color565(0,255,0), canvas);
+	//BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(Minutes * (360/60), BLACK_RAM_COS) / 100 * MINUTE_LENGTH, BlackRam_GetTrig(Minutes * (360/60), BLACK_RAM_SIN) / 100 * MINUTE_LENGTH, Color565(0,255,0), canvas);
 	
 	// Draw the second hand
-	BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(seconds * (360/60), BLACK_RAM_COS) * SECOND_LENGTH, BlackRam_GetTrig(seconds * (360/60), BLACK_RAM_SIN) * SECOND_LENGTH, Color565(0,0,255), canvas);
+	BR_GFX_DrawLine(63, 63, (((uint16_t)BlackRam_GetTrig(Seconds * (360/60), BLACK_RAM_COS) * SECOND_LENGTH) / 100) + 63, (((uint16_t)BlackRam_GetTrig(Seconds * (360/60), BLACK_RAM_SIN) * SECOND_LENGTH) / 100) + 63, Color565(0,0,255), canvas);
 }
 
 

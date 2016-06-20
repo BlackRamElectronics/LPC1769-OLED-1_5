@@ -1,4 +1,6 @@
 
+#include "BR_Font.h"
+
 typedef uint16_t BR_GFX_Colour;
 
 typedef struct BR_GFX_Canvas

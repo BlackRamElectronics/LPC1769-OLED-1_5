@@ -9,6 +9,6 @@ typedef enum
 
 
 // This function will return the sin/cos of the angle requested *! multiplied by 100 !*
-uint8_t BlackRam_GetTrig(uint16_t degrees, BlackRam_TrigType type);
+int8_t BlackRam_GetTrig(uint16_t degrees, BlackRam_TrigType type);
 
 #endif // _BLACK_RAM_TRIG_LOOKUP_H_

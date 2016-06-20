@@ -4,6 +4,9 @@ SOURCES += Drivers/OLED_1_5/OLED_Driver.c
 SOURCES += Drivers/OLED_1_5/OLED_HWIF.c
 SOURCES += Drivers/BR_SysTick/BR_SysTick.c
 SOURCES += Lib/BlackRam_EmbedGFX/BlackRam_EmbedGFX.c
+SOURCES += Lib/BlackRam_TrigLookup/BlackRam_TrigLookup.c
+SOURCES += clock_demo.c
+SOURCES += guage_demo.c
 
 # Peripheral Driver Source Code
 SOURCES += LPC17XX/Peripherals/source/debug_frmwrk.c

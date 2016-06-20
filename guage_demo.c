@@ -1,8 +1,10 @@
 // ==== System Includes ===
+#include <stdint.h>         // Include standard types
+#include <stdio.h>
 
 // ==== Project Includes ====
 #include "BlackRam_EmbedGFX.h"
-#include "BR_Font_OpenSans16p.h"
+#include "BR_Font_OpenSans12p.h"
 #include "guage_demo.h"
 
 // ==== Definitions ====
@@ -23,12 +25,12 @@ void UpdateGaugeDemo(uint8_t gauge1, uint8_t gauge2, BR_GFX_Canvas canvas)
 	// Fill the gauge with a gradient
 	while((i < gauge1) && (i < 100))
 	{
-		BR_GFX_DrawRect(14, i + 14, 24, i + 14, Color565((i * (255/100)),((100 - i) * (255/100),0), canvas);
+		BR_GFX_DrawRect(14, i + 14, 24, i + 14, Color565((i * (255/100)),((100 - i) * (255/100)),0), canvas);
 		
 		i++;
 	}
 	
 	// Print the value to the screen
 	sprintf(str_buffer, "%d", gauge1);
-	BR_GFX_DrawTextToBuffer(str_buffer, Color565(64, 64, 255), BR_OpenSans16p, 30, 30, canvas);
+	BR_GFX_DrawTextToBuffer(str_buffer, Color565(64, 64, 255), BR_OpenSans12p, 30, 30, canvas);
 }
