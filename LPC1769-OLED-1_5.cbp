@@ -59,7 +59,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers/BR_SysTick/BR_SysTick.h" />
-		<Unit filename="Drivers/OLED_1_5/Font_5x7.h" />
+		<Unit filename="Drivers/OLED_1_5/BR_Font.h" />
+		<Unit filename="Drivers/OLED_1_5/BR_Font_OpenSans12p.h" />
+		<Unit filename="Drivers/OLED_1_5/BR_Font_OpenSans16p.h" />
+		<Unit filename="Drivers/OLED_1_5/BR_Font_OpenSans24p.h" />
 		<Unit filename="Drivers/OLED_1_5/oled_driver.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -182,6 +185,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="LPC17XX/System/system_lpc17xx.h" />
+		<Unit filename="Lib/BlackRam_EmbedGFX/BlackRam_EmbedGFX.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Lib/BlackRam_EmbedGFX/BlackRam_EmbedGFX.h" />
 		<Unit filename="include/lpc17xx_libcfg.h" />
 		<Unit filename="lpc1769-oled-1_5.c">
 			<Option compilerVar="CC" />
