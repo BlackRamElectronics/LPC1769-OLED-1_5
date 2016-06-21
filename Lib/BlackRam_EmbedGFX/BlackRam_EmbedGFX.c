@@ -187,8 +187,8 @@ BR_GFX_RET BR_GFX_DrawLine(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
     {
         while(y0 <= y1)
         {
-            y0++;
             BR_GFX_DrawPixel(x0, y0, colour, 255, canvas);
+            y0++;
         }
         return(BR_GFX_RET_OK);
     }
@@ -280,16 +280,16 @@ BR_GFX_RET BR_GFX_DrawRect(uint16_t start_x, uint16_t start_y, uint16_t end_x, u
 	// Create the rectangle from four lines
 	
 	// Draw top line
-	BR_GFX_DrawRect(start_x, start_y, end_x, start_y, colour, canvas);
+	BR_GFX_DrawLine(start_x, start_y, end_x, start_y, colour, canvas);
 	
 	// Draw bottom line
-	BR_GFX_DrawRect(start_x, end_y, end_x, end_y, colour, canvas);
+	BR_GFX_DrawLine(start_x, end_y, end_x, end_y, colour, canvas);
 	
 	// Draw left line
-	BR_GFX_DrawRect(start_x, start_y, start_x, end_y, colour, canvas);
+	BR_GFX_DrawLine(start_x, start_y, start_x, end_y, colour, canvas);
 	
 	// Draw right line
-	BR_GFX_DrawRect(end_x, start_y, end_x, end_y, colour, canvas);
+	BR_GFX_DrawLine(end_x, start_y, end_x, end_y, colour, canvas);
 }
 
 //====================================================================================

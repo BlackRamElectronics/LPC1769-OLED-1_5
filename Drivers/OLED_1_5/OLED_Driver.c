@@ -9,8 +9,8 @@
 #include "OLED_HWIF.h"
 #include "BlackRam_EmbedGFX.h"
 //#include "BR_Font_OpenSans12p.h"
-#include "BR_Font_OpenSans16p.h"
-#include "BR_Font_OpenSans24p.h"
+//#include "BR_Font_OpenSans16p.h"
+//#include "BR_Font_OpenSans24p.h"
 
 #include "clock_demo.h"
 #include "guage_demo.h"
@@ -334,13 +334,32 @@ void InitOLED(void)
 
     OLED_MsDelay(3000);*/
 
-	ClockDemo_SetTime(0, 1, 2);
 
+
+
+	// Clock Demo
+	/*ClockDemo_SetTime(0, 1, 2);
 	while(1)
 	{
 		ClockDemo_1sUpdate(canvas);
 		WriteFrame(OLED_Buffer);
 		OLED_MsDelay(30);
+	}*/
+
+	while(1)
+	{
+		for(i = 0; i <= 100; i+=2)
+		{
+			// Fill the buffer with blue
+			for(j = 0; j < OLED_WIDTH*OLED_HEIGHT; j++)
+			{
+				OLED_Buffer[j] = Color565(0, 0, 0);
+			}
+	
+			UpdateGaugeDemo(i, 100 - i, canvas);
+			WriteFrame(OLED_Buffer);
+			OLED_MsDelay(50);
+		}
 	}
 	
 	
@@ -375,7 +394,7 @@ void InitOLED(void)
 
     j = 0;
 
-    while(1)
+    /*while(1)
     {
     	// Fill the buffer with blue
     	for(i = 0; i < OLED_WIDTH*OLED_HEIGHT; i++)
@@ -389,7 +408,7 @@ void InitOLED(void)
     	//DrawTextToBuffer("12345", Color565(255,0,255), BR_OpenSans16p, 10, 60, OLED_Buffer);
     	WriteFrame(OLED_Buffer);
     	OLED_MsDelay(300);
-    }
+    }*/
 
 
     //fillScreen(Color565(0x00, 0xFF, 0x00));
