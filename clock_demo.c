@@ -51,13 +51,13 @@ void ClockDemo_1sUpdate(BR_GFX_Canvas canvas)
 	BR_GFX_DrawImage(BR_ImageBuffer_clock, 0, 0, 128, 128, canvas);
 	
 	// Draw the hour hand
-	//BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(Hours * (360/24), BLACK_RAM_COS) / 100 * HOUR_LENGTH, BlackRam_GetTrig(Hours * (360/24), BLACK_RAM_SIN) / 100 * HOUR_LENGTH, Color565(255,0,0), canvas);
+	BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(Hours * (360/24), BLACK_RAM_COS) / 100 * HOUR_LENGTH, BlackRam_GetTrig(Hours * (360/24), BLACK_RAM_SIN) / 100 * HOUR_LENGTH, Color565(255,0,0), canvas);
 	
 	// Draw the minute hand
-	//BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(Minutes * (360/60), BLACK_RAM_COS) / 100 * MINUTE_LENGTH, BlackRam_GetTrig(Minutes * (360/60), BLACK_RAM_SIN) / 100 * MINUTE_LENGTH, Color565(0,255,0), canvas);
+	BR_GFX_DrawLine(63, 63, BlackRam_GetTrig(Minutes * (360/60), BLACK_RAM_COS) / 100 * MINUTE_LENGTH, BlackRam_GetTrig(Minutes * (360/60), BLACK_RAM_SIN) / 100 * MINUTE_LENGTH, Color565(0,255,0), canvas);
 	
 	// Draw the second hand
-	BR_GFX_DrawLine(63, 63, (((uint16_t)BlackRam_GetTrig(Seconds * (360/60), BLACK_RAM_COS) * SECOND_LENGTH) / 100) + 63, (((uint16_t)BlackRam_GetTrig(Seconds * (360/60), BLACK_RAM_SIN) * SECOND_LENGTH) / 100) + 63, Color565(0,0,255), canvas);
+	BR_GFX_DrawLine(63, 63, (((int16_t)BlackRam_GetTrig(Seconds * (360/60), BLACK_RAM_COS) * SECOND_LENGTH) / 100) + 63, (((int16_t)BlackRam_GetTrig(Seconds * (360/60), BLACK_RAM_SIN) * SECOND_LENGTH) / 100) + 63, Color565(0,0,255), canvas);
 }
 
 
